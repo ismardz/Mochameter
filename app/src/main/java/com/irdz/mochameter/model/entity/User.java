@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 @DatabaseTable(tableName = "user")
 public class User {
 
-    @DatabaseField(generatedIdSequence = "user_id_seq") private int id;
+    @DatabaseField(generatedIdSequence = "user_id_seq") private Integer id;
     @DatabaseField private String email;
     @DatabaseField private String fullname;
     @DatabaseField private String password;
-    @DatabaseField(columnName = "mac_address") private String macAddress;
+    @DatabaseField(columnName = "android_id") private String androidId;
     @DatabaseField private Integer typeu;
 }

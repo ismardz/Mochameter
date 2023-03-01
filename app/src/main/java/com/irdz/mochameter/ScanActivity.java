@@ -5,7 +5,6 @@ import android.content.pm.PackageManager;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -116,7 +115,7 @@ public class ScanActivity extends AppCompatActivity {
             } catch (ExecutionException | InterruptedException e) {
                 // Handle the error
                 e.printStackTrace();
-                Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT);
+                Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show();
             }
         }, ContextCompat.getMainExecutor(this));
     }
@@ -137,6 +136,7 @@ public class ScanActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     // Handle the error
+                    e.printStackTrace();
                 })
                 .addOnCompleteListener(task -> imageProxy.close());
         }

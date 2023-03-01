@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CoffeeDetail"
+    tools:context=".ReviewCoffee"
     android:orientation="vertical">
+
 
     <ImageView
         android:id="@+id/ivCoffee"
@@ -53,10 +54,9 @@
             <com.irdz.mochameter.util.SvgRatingBar
                 android:id="@+id/rbAcidity"
                 style="@style/coffeeRatingBar"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:isIndicator="true"
                 android:rating="0"
                 android:stepSize="0.5" />
 
@@ -82,7 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:isIndicator="true"
+                android:indeterminateDrawable="@drawable/ic_full2"
                 android:rating="0"
                 android:stepSize="0.5" />
         </TableRow>
@@ -106,7 +106,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:isIndicator="true"
                 android:rating="0"
                 android:stepSize="0.5" />
 
@@ -133,7 +132,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:isIndicator="true"
                 android:rating="0"
                 android:stepSize="0.5" />
 
@@ -159,7 +157,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:isIndicator="true"
                 android:rating="0"
                 android:stepSize="0.5" />
 
@@ -167,21 +164,12 @@
 
     </TableLayout>
 
-    <TextView
-        android:id="@+id/tvNoReviews"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        android:text="@string/no_reviews"
-        android:textAlignment="center" />
-
     <Button
-        android:id="@+id/btnReviewCoffe"
+        android:id="@+id/btnSendReview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
-        android:text="@string/review_this_coffee" />
+        android:text="@string/send_review" />
 
 </LinearLayout>

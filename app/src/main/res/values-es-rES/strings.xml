@@ -4,6 +4,17 @@
     <string name="title_ranking">Ranking</string>
     <string name="title_evaluations">Mis evaluaciones</string>
     <string name="title_profile">Perfil</string>
+    <string name="title_activity_scan">Escaner de códigos</string>
     <string name="error">error</string>
     <string name="banner_scan_id">ca-app-pub-4644948724078988/1547766212</string>
+    <string name="banner_scan_id_test">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="not_coffee">Esto no es café!</string>
+    <string name="acidity">Acidez</string>
+    <string name="aroma">Aroma</string>
+    <string name="body">Cuerpo</string>
+    <string name="aftertaste">Retrogusto</string>
+    <string name="score">Puntuación</string>
+    <string name="review_this_coffee">Valorar este café</string>
+    <string name="send_review">Enviar valoración</string>
+    <string name="no_reviews">Este café no tiene valoraciones.\nSé el primero en valorarlo!</string>
 </resources>

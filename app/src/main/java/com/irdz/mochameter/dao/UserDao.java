@@ -5,4 +5,5 @@ import com.j256.ormlite.dao.Dao;
 
 public interface UserDao extends Dao<User, Integer> {
 
+    User findByAndroidId(String androidId);
 }

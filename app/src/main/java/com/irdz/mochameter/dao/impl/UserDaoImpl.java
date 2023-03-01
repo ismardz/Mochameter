@@ -5,9 +5,12 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 
+import com.irdz.mochameter.config.AppDatabase;
 import com.irdz.mochameter.dao.UserDao;
 import com.irdz.mochameter.model.entity.User;
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
@@ -33,6 +36,20 @@ public class UserDaoImpl extends BaseDaoImpl<User, Integer> implements UserDao {
             }
         }
         return instance;
+    }
+
+    @Override
+    public User findByAndroidId(final String androidId) {
+        try {
+            QueryBuilder<User, Integer> coffeeQueryBuilder = AppDatabase.getInstance().userDao.queryBuilder();
+
+            Where<User, Integer> where = queryBuilder().where().eq("android_id", androidId);
+            coffeeQueryBuilder.setWhere(where);
+
+            return coffeeQueryBuilder.queryForFirst();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Integer getLoggedInUserId(final ContextWrapper contextWrapper) {

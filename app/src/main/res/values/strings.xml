@@ -3,7 +3,7 @@
     <string name="title_ranking">Ranking</string>
     <string name="title_evaluations">My evaluations</string>
     <string name="title_profile">Profile</string>
-    <string name="title_activity_scan">ScanActivity</string>
+    <string name="title_activity_scan">Scan code</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -16,5 +16,14 @@
 
 
     <string name="banner_scan_id">ca-app-pub-4644948724078988/1547766212</string>
+    <string name="banner_scan_id_test">ca-app-pub-3940256099942544/6300978111</string>
     <string name="not_coffee">This is not coffee!</string>
+    <string name="acidity">Acidity</string>
+    <string name="aroma">Aroma</string>
+    <string name="body">Body</string>
+    <string name="aftertaste">Aftertaste</string>
+    <string name="score">Score</string>
+    <string name="review_this_coffee">Review this coffee</string>
+    <string name="send_review">Send review</string>
+    <string name="no_reviews">This coffee has not reviews.\nBe the first one to review it!</string>
 </resources>

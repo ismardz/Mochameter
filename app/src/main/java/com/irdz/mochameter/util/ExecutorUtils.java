@@ -1,5 +1,9 @@
 package com.irdz.mochameter.util;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,12 +47,11 @@ public class ExecutorUtils {
         List<T> results = new ArrayList<>();
         List<Future<T>> futures = null;
         if (callables.length > 0) {
-//            log.debug("Executing {} callables in {} paralel threads", callables.size(), maximumExecutions);
             ExecutorService executor = Executors.newFixedThreadPool(maximumExecutions);
             try {
                 futures = executor.invokeAll(Arrays.asList(callables));
             } catch (InterruptedException e) {
-//                log.error("Error running callables", e);
+                Log.e(TAG,"Error running callables", e);
                 Thread.currentThread().interrupt();
             }
             awaitTerminationAfterShutdown(executor);
@@ -56,7 +59,7 @@ public class ExecutorUtils {
                 try {
                     results.add(future.get());
                 } catch (InterruptedException | ExecutionException e) {
-//                    log.error(e.getMessage(), e);
+                    Log.e(TAG,"Error running callables", e);
                     if(e instanceof InterruptedException) {
                         Thread.currentThread().interrupt();
                     }
@@ -73,7 +76,8 @@ public class ExecutorUtils {
             if (!threadPool.awaitTermination(TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
                 threadPool.shutdownNow();
             }
-        } catch (InterruptedException ex) {
+        } catch (InterruptedException e) {
+            Log.e(TAG,"Error running callables", e);
             threadPool.shutdownNow();
             Thread.currentThread().interrupt();
         }

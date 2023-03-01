@@ -12,13 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-
+<!--TODO-->
     <com.google.android.gms.ads.AdView
         android:id="@+id/banner_scan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_scan_id"
+        ads:adUnitId="@string/banner_scan_id_test"
         ads:layout_constraintBottom_toBottomOf="@id/previewView"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

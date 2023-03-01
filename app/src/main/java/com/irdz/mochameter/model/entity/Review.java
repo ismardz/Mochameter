@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @DatabaseTable(tableName = "review")
 public class Review {
 
-    @DatabaseField(generatedIdSequence = "review_id_seq") private int id;
+    @DatabaseField(generatedIdSequence = "review_id_seq") private Integer id;
     @DatabaseField(foreign = true, foreignColumnName = "id", columnName = "user_id") private User user;
     @DatabaseField(foreign = true, foreignColumnName = "id", columnName = "coffee_id") private Coffee coffee;
     @DatabaseField private Double aroma;
