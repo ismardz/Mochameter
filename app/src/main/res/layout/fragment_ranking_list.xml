@@ -1,42 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="20dp"
-    tools:context=".ReviewCoffee">
+    android:orientation="horizontal"
+    android:paddingVertical="10dp"
+    tools:context=".RankingListAdapter">
 
+    <!-- TODO: Update blank fragment layout -->
 
     <ImageView
-        android:id="@+id/ivCoffee"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:foregroundGravity="center_horizontal"
-        android:maxHeight="300dp"
-        android:minHeight="200dp" />
-
-    <TextView
-        android:id="@+id/tvName"
+        android:id="@+id/ivCoffeeRanking"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="tvName"
-        android:textSize="20sp" />
+        android:layout_weight="1"
+        android:src="@drawable/ic_logo"
+        app:layout_constraintHeight="138.5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth="150dp" />
 
     <TextView
         android:id="@+id/tvBrand"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="tvBrand"
-        android:textSize="16sp" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:text="brand"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/ivCoffeeRanking"
+        app:layout_constraintWidth="150dp" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="65dp"
+        android:text="name"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/ivCoffeeRanking"
+        app:layout_constraintWidth="150dp" />
 
     <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintLeft_toRightOf="@id/ivCoffeeRanking">
 
         <TableRow
             android:layout_width="match_parent"
@@ -55,9 +65,10 @@
             <com.irdz.mochameter.util.SvgRatingBar
                 android:id="@+id/rbAcidity"
                 style="@style/coffeeRatingBar"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:isIndicator="true"
                 android:rating="0"
                 android:stepSize="0.5" />
 
@@ -83,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:indeterminateDrawable="@drawable/ic_full2"
+                android:isIndicator="true"
                 android:rating="0"
                 android:stepSize="0.5" />
         </TableRow>
@@ -107,6 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:isIndicator="true"
                 android:rating="0"
                 android:stepSize="0.5" />
 
@@ -133,6 +145,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:isIndicator="true"
                 android:rating="0"
                 android:stepSize="0.5" />
 
@@ -158,6 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:isIndicator="true"
                 android:rating="0"
                 android:stepSize="0.5" />
 
@@ -165,12 +179,5 @@
 
     </TableLayout>
 
-    <Button
-        android:id="@+id/btnSendReview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp"
-        android:text="@string/send_review" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

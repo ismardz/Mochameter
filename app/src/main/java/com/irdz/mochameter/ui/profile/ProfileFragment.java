@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
+import com.irdz.mochameter.R;
 import com.irdz.mochameter.databinding.FragmentNotificationsBinding;
 
 public class ProfileFragment extends Fragment {
@@ -18,14 +18,13 @@ public class ProfileFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ProfileViewModel profileViewModel =
-            new ViewModelProvider(this).get(ProfileViewModel.class);
 
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textNotifications;
-        profileViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        textView.setText(getActivity().getString(R.string.soon));
         return root;
     }
 

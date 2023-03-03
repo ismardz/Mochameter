@@ -1,14 +1,24 @@
 package com.irdz.mochameter;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.irdz.mochameter.config.AppDatabase;
 import com.irdz.mochameter.dao.impl.UserDaoImpl;
 import com.irdz.mochameter.model.entity.Coffee;
@@ -32,8 +42,16 @@ public class ReviewCoffee extends AppCompatActivity {
     private RatingBar rbAftertaste;
     private RatingBar rbScore;
 
+    private InterstitialAd mInterstitialAd;
+
+    public static boolean finish = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(finish) {
+            onBackPressed();
+            finish = false;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_coffee);
 
@@ -45,39 +63,39 @@ public class ReviewCoffee extends AppCompatActivity {
 
 
         OpenFoodFactsResponse coffeeDetail = (OpenFoodFactsResponse) getIntent().getSerializableExtra("coffeeDetail");
-        Coffee coffeByBarcode = (Coffee) getIntent().getSerializableExtra("coffeByBarcode");
+        Coffee coffeeDatabase = (Coffee) getIntent().getSerializableExtra("coffeeDatabase");
 
         //buscar review por coffee + MAC address/userid para rellenarlo
         AtomicReference<Review> review = new AtomicReference<>(null);
-        if (coffeByBarcode != null) {
+        if (coffeeDatabase != null) {
             ExecutorUtils.runCallables(() -> {
-                review.set(AppDatabase.getInstance().reviewDao.findByCoffeIdAndUserMacOrLoggedInUser(
-                    coffeByBarcode.getId(),
+                review.set(AppDatabase.getInstance().reviewDao.findByCoffeIdAndUserAndroidIdOrLoggedInUser(
+                    coffeeDatabase.getId(),
                     getAndroidId(),
                     this
                 ));
                 return null;
             });
         }
-        //TODO
-        fillCoffeInfo(coffeeDetail, coffeByBarcode, review.get());
+        fillCoffeInfo(coffeeDetail, coffeeDatabase, review.get());
 
+        loadAd();
     }
 
     private void fillCoffeInfo(
         final OpenFoodFactsResponse coffeeDetail,
-        final Coffee coffeByBarcode,
+        final Coffee coffeeDatabase,
         final Review review
     ) {
 
-        fillCoffeeData(coffeeDetail);
+        fillCoffeeData(coffeeDetail, coffeeDatabase);
         fillReview(review);
 
         Button btnSendReview = findViewById(R.id.btnSendReview);
         btnSendReview.setOnClickListener(v -> {
 
             User user = getUser();
-            Coffee coffeeByBarCode = getCoffee(coffeByBarcode, coffeeDetail);
+            Coffee coffeeByBarCode = getCoffee(coffeeDatabase, coffeeDetail);
 
             Review revw = Review.builder()
                 .id(Optional.ofNullable(review).map(Review::getId).orElse(null))
@@ -85,14 +103,18 @@ public class ReviewCoffee extends AppCompatActivity {
                 .aroma(Double.valueOf(rbAroma.getRating()))
                 .body(Double.valueOf(rbBody.getRating()))
                 .aftertaste(Double.valueOf(rbAftertaste.getRating()))
-                .score(Double.valueOf(rbAftertaste.getRating()))
+                .score(Double.valueOf(rbScore.getRating()))
                 .user(user)
                 .coffee(coffeeByBarCode)
                 .build();
 
             ReviewService.getInstance().insertOrUpdate(revw);
 
-            CoffeeDetail.coffeeByBarCode = coffeeByBarCode;
+            CoffeeDetail.coffeeDatabase = coffeeByBarCode;
+
+            finish = true;
+
+            showAd();
 
             onBackPressed();
         });
@@ -138,19 +160,95 @@ public class ReviewCoffee extends AppCompatActivity {
 
     }
 
-    private void fillCoffeeData(final OpenFoodFactsResponse coffeeDetail) {
+    private void fillCoffeeData(final OpenFoodFactsResponse coffeeDetail, final Coffee coffeeDatabase) {
         ImageView ivCoffee = findViewById(R.id.ivCoffee);
-        Picasso.get().load(coffeeDetail.product.image_front_url).into(ivCoffee);
-
         TextView tvName = findViewById(R.id.tvName);
-        tvName.setText(coffeeDetail.product.product_name);
-
         TextView tvBrand = findViewById(R.id.tvBrand);
-        tvBrand.setText(coffeeDetail.product.brands);
+
+        if(coffeeDatabase == null) {
+            Picasso.get().load(coffeeDetail.product.image_front_url).into(ivCoffee);
+            tvName.setText(coffeeDetail.product.product_name);
+            tvBrand.setText(coffeeDetail.product.brands);
+        } else {
+            Picasso.get().load(coffeeDatabase.getImageUrl()).into(ivCoffee);
+            tvName.setText(coffeeDatabase.getCoffeeName());
+            tvBrand.setText(coffeeDatabase.getBrand());
+
+        }
 
     }
 
     private String getAndroidId() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+
+
+    private void loadAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        //TODO
+        InterstitialAd.load(this, getString(R.string.testInterstitialAd_id), adRequest,
+            new InterstitialAdLoadCallback() {
+                @Override
+                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                    // The mInterstitialAd reference will be null until
+                    // an ad is loaded.
+                    mInterstitialAd = interstitialAd;
+                    configureAdd();
+                    Log.i(TAG, "onAdLoaded");
+                }
+
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    // Handle the error
+                    Log.d(TAG, loadAdError.toString());
+                    mInterstitialAd = null;
+                }
+            });
+    }
+
+    private void showAd() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(this);
+        } else {
+            Log.d("TAG", "The interstitial ad wasn't ready yet.");
+        }
+    }
+
+    private void configureAdd() {
+        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+            @Override
+            public void onAdClicked() {
+                // Called when a click is recorded for an ad.
+                Log.d(TAG, "Ad was clicked.");
+            }
+
+            @Override
+            public void onAdDismissedFullScreenContent() {
+                // Called when ad is dismissed.
+                // Set the ad reference to null so you don't show the ad a second time.
+                Log.d(TAG, "Ad dismissed fullscreen content.");
+                mInterstitialAd = null;
+            }
+
+            @Override
+            public void onAdFailedToShowFullScreenContent(AdError adError) {
+                // Called when ad fails to show.
+                Log.e(TAG, "Ad failed to show fullscreen content.");
+                mInterstitialAd = null;
+            }
+
+            @Override
+            public void onAdImpression() {
+                // Called when an impression is recorded for an ad.
+                Log.d(TAG, "Ad recorded an impression.");
+            }
+
+            @Override
+            public void onAdShowedFullScreenContent() {
+                // Called when ad is shown.
+                Log.d(TAG, "Ad showed fullscreen content.");
+            }
+        });
     }
 }

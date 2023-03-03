@@ -27,6 +27,15 @@ public class CoffeeService {
         return coffee[0];
     }
 
+    public Coffee findById(final Integer id) {
+        final Coffee[] coffee = {null};
+        ExecutorUtils.runCallables(() -> {
+            coffee[0] = AppDatabase.getInstance().coffeeDao.queryForId(id);
+            return coffee[0];
+        });
+        return coffee[0];
+    }
+
 
 
     public Coffee insert(final OpenFoodFactsResponse coffeeDetail) {
@@ -34,6 +43,7 @@ public class CoffeeService {
             .barcode(coffeeDetail.code)
             .brand(coffeeDetail.product.brands)
             .coffeeName(coffeeDetail.product.product_name)
+            .imageUrl(coffeeDetail.product.image_front_url)
             .build());
         ExecutorUtils.runCallables(() -> {
             coffee.set(AppDatabase.getInstance().coffeeDao.createIfNotExists(coffee.get()));

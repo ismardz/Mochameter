@@ -2,10 +2,14 @@ package com.irdz.mochameter;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.LinearLayout;
+import android.os.Looper;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +48,8 @@ public class ScanActivity extends AppCompatActivity {
 
     private AdView bannerScan;
 
+    private FrameLayout frameLayout;
+
     private static Toast toast;
 
     private static final Set<String> NOT_COFFEE_BARCODES = new HashSet<>();
@@ -57,6 +63,13 @@ public class ScanActivity extends AppCompatActivity {
 
         binding = ActivityScanBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
+        frameLayout = binding.frameLayout;
+        frameLayout.setVisibility(View.INVISIBLE);
+
+        TextView tvMessage = binding.tvMessage;
+        tvMessage.setOnClickListener(v -> launchOpenFoodFacts());
 
         bindCamera();
     }
@@ -154,7 +167,8 @@ public class ScanActivity extends AppCompatActivity {
             loadCoffee(productByBarcode);
         } else if(!isCoffee && !NOT_COFFEE_BARCODES.contains(barcode)) {
             NOT_COFFEE_BARCODES.add(barcode);
-            showAToast(getString(R.string.not_coffee));
+            new Handler(Looper.getMainLooper()).postDelayed(() -> NOT_COFFEE_BARCODES.remove(barcode), 5000);
+            showMessage();
         }
     }
 
@@ -164,19 +178,29 @@ public class ScanActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void showAToast (String st){ //"Toast toast" is declared in the class
-        String oldText = Optional.ofNullable(toast)
-            .map(Toast::getView)
-            .map(toast -> (LinearLayout)toast)
-            .map(linearLayout -> linearLayout.getChildAt(0))
-            .map(children -> (TextView) children)
-            .map(TextView::getText)
-            .map(CharSequence::toString)
-            .orElse(null);
-        if(toast == null || toast.getView() == null) {
-            if(oldText == null || !oldText.equalsIgnoreCase(st) || !toast.getView().isShown()) {
-                toast = Toast.makeText(this, st, Toast.LENGTH_SHORT);
-                toast.show();
+    private void showMessage() {
+        if(frameLayout.getVisibility() == View.INVISIBLE) {
+            frameLayout.setVisibility(View.VISIBLE);
+            frameLayout.postDelayed(() -> frameLayout.setVisibility(View.INVISIBLE), 5000);
+        }
+    }
+
+    private void launchOpenFoodFacts() {
+        String packageName = "org.openfoodfacts.scanner";
+        Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+
+        if (launchIntent != null) {
+            // Open Food Facts app is installed, launch it
+            startActivity(launchIntent);
+        } else {
+            // Open Food Facts app is not installed, open Play Store to install it
+            Intent playStoreIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + packageName));
+            if (playStoreIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(playStoreIntent);
+            } else {
+                // Play Store app not found on the device, open web browser to Open Food Facts app page
+                Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName));
+                startActivity(webIntent);
             }
         }
     }

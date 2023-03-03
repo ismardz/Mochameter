@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="interstitialAd_id">ca-app-pub-4644948724078988/6044783539</string>
+    <string name="testInterstitialAd_id">ca-app-pub-3940256099942544/1033173712</string>
+
     <string name="app_name">Mochameter</string>
     <string name="title_ranking">Ranking</string>
     <string name="title_evaluations">Mis evaluaciones</string>
@@ -8,7 +11,7 @@
     <string name="error">error</string>
     <string name="banner_scan_id">ca-app-pub-4644948724078988/1547766212</string>
     <string name="banner_scan_id_test">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="not_coffee">Esto no es café!</string>
+    <string name="not_coffee">Café no encontrado.\nPulsa aqui para registrarlo.</string>
     <string name="acidity">Acidez</string>
     <string name="aroma">Aroma</string>
     <string name="body">Cuerpo</string>
@@ -17,4 +20,7 @@
     <string name="review_this_coffee">Valorar este café</string>
     <string name="send_review">Enviar valoración</string>
     <string name="no_reviews">Este café no tiene valoraciones.\nSé el primero en valorarlo!</string>
+    <string name="sort_by">Ordenar por</string>
+    <string name="reverse">Invertir</string>
+    <string name="soon">Próximamente</string>
 </resources>

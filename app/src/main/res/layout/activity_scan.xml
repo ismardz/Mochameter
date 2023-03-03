@@ -10,15 +10,47 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:elevation="1dp">
 
-<!--TODO-->
+
+    </androidx.camera.view.PreviewView>
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="2dp">
+
+        <!-- Half-transparent layer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80000000"
+            android:elevation="3dp" />
+
+        <!-- Text -->
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="4dp"
+            android:text="@string/not_coffee"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp" />
+    </FrameLayout>
+
+
+
+    <!--TODO-->
     <com.google.android.gms.ads.AdView
         android:id="@+id/banner_scan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="3dp"
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_scan_id_test"
-        ads:layout_constraintBottom_toBottomOf="@id/previewView"/>
+        ads:layout_constraintBottom_toBottomOf="@id/previewView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

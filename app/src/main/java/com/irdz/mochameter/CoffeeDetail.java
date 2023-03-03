@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class CoffeeDetail extends AppCompatActivity {
 
-    public static Coffee coffeeByBarCode;
+    public static Coffee coffeeDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +31,14 @@ public class CoffeeDetail extends AppCompatActivity {
         setContentView(R.layout.activity_coffee_detail);
 
         OpenFoodFactsResponse coffeeDetail = (OpenFoodFactsResponse) getIntent().getSerializableExtra("coffeeDetail");
-        fillCoffeInfo(coffeeDetail);
+        Review reviewAvg = (Review) getIntent().getSerializableExtra("reviewAvg");
+        fillCoffeInfo(coffeeDetail, reviewAvg);
 
         Button btnReviewCoffe = findViewById(R.id.btnReviewCoffe);
         btnReviewCoffe.setOnClickListener(v -> {
+            ReviewCoffee.finish = false;
             Intent intent = new Intent(this, ReviewCoffee.class);
-            intent.putExtra("coffeByBarcode", coffeeByBarCode);
+            intent.putExtra("coffeeDatabase", coffeeDatabase);
             intent.putExtra("coffeeDetail", coffeeDetail);
             startActivity(intent);
         });
@@ -46,7 +48,8 @@ public class CoffeeDetail extends AppCompatActivity {
     public void onRestart() {
         super.onRestart();
         OpenFoodFactsResponse coffeeDetail = (OpenFoodFactsResponse) getIntent().getSerializableExtra("coffeeDetail");
-        fillCoffeInfo(coffeeDetail);
+//        Review reviewAvg = (Review) getIntent().getSerializableExtra("reviewAvg");
+        fillCoffeInfo(coffeeDetail, null);
     }
 
     @Override
@@ -55,18 +58,25 @@ public class CoffeeDetail extends AppCompatActivity {
         ScanActivity.coffeeRead = false;
     }
 
-    private void fillCoffeInfo(final OpenFoodFactsResponse coffeeDetail) {
-
-        coffeeByBarCode = CoffeeService.getInstance().findByBarcode(coffeeDetail.code);
+    private void fillCoffeInfo(final OpenFoodFactsResponse coffeeDetail, final Review reviewAvg) {
         AtomicReference<Review> review = new AtomicReference<>();
-        Optional.ofNullable(coffeeByBarCode)
-            .map(Coffee::getId)
+
+        if(reviewAvg == null) {
+            if(coffeeDatabase == null) {
+                coffeeDatabase = CoffeeService.getInstance().findByBarcode(coffeeDetail.code);
+            }
+            Optional.ofNullable(coffeeDatabase)
+                .map(Coffee::getId)
                 .ifPresent(coffeeId -> ExecutorUtils.runCallables(() -> {
-                    review.set(ReviewService.getInstance().getReviewByCoffeeId(coffeeByBarCode.getId()));
+                    review.set(ReviewService.getInstance().getReviewByCoffeeId(coffeeDatabase.getId()));
                     return review;
                 }));
+        } else {
+            coffeeDatabase = reviewAvg.getCoffee();
+            review.set(reviewAvg);
+        }
 
-        fillCoffeeData(coffeeDetail);
+        fillCoffeeData(coffeeDetail, review.get());
         fillReview(review.get());
     }
 
@@ -95,15 +105,21 @@ public class CoffeeDetail extends AppCompatActivity {
 
     }
 
-    private void fillCoffeeData(final OpenFoodFactsResponse coffeeDetail) {
+    private void fillCoffeeData(final OpenFoodFactsResponse coffeeDetail, final Review reviewAvg) {
         ImageView ivCoffee = findViewById(R.id.ivCoffee);
-        Picasso.get().load(coffeeDetail.product.image_front_url).into(ivCoffee);
-
         TextView tvName = findViewById(R.id.tvName);
-        tvName.setText(coffeeDetail.product.product_name);
-
         TextView tvBrand = findViewById(R.id.tvBrand);
-        tvBrand.setText(coffeeDetail.product.brands);
+
+        if(coffeeDetail != null) {
+            Picasso.get().load(coffeeDetail.product.image_front_url).into(ivCoffee);
+            tvName.setText(coffeeDetail.product.product_name);
+            tvBrand.setText(coffeeDetail.product.brands);
+        } else if(reviewAvg != null) {
+            Picasso.get().load(reviewAvg.getCoffee().getImageUrl()).into(ivCoffee);
+            tvName.setText(reviewAvg.getCoffee().getCoffeeName());
+            tvBrand.setText(reviewAvg.getCoffee().getBrand());
+
+        }
 
     }
 }

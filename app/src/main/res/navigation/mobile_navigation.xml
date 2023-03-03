@@ -9,11 +9,11 @@
         android:id="@+id/navigation_ranking"
         android:name="com.irdz.mochameter.ui.ranking.RankingFragment"
         android:label="@string/title_ranking"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_ranking" />
 
     <fragment
         android:id="@+id/navigation_evaluation"
-        android:name="com.irdz.mochameter.ui.dashboard.EvaluationsFragment"
+        android:name="com.irdz.mochameter.ui.myevaluations.EvaluationsFragment"
         android:label="@string/title_evaluations"
         tools:layout="@layout/fragment_dashboard" />
 

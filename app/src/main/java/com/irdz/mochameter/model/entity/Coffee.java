@@ -21,5 +21,6 @@ public class Coffee implements Serializable {
     @DatabaseField(columnName = "coffee_name") private String coffeeName;
     @DatabaseField private String brand;
     @DatabaseField private String barcode;
+    @DatabaseField(columnName = "image_url")  private String imageUrl;
 
 }
