@@ -11,7 +11,7 @@
     <string name="error">error</string>
     <string name="banner_scan_id">ca-app-pub-4644948724078988/1547766212</string>
     <string name="banner_scan_id_test">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="not_coffee">Café no encontrado.\nPulsa aqui para registrarlo.</string>
+    <string name="not_coffee">Café no encontrado.\nPulsa aqui para registrarlo en Open Food Facts.</string>
     <string name="acidity">Acidez</string>
     <string name="aroma">Aroma</string>
     <string name="body">Cuerpo</string>
@@ -23,4 +23,8 @@
     <string name="sort_by">Ordenar por</string>
     <string name="reverse">Invertir</string>
     <string name="soon">Próximamente</string>
+    <string name="reviewCoffee">Valorar café</string>
+    <string name="coffeeDetail">Detalle del café</string>
+    <string name="coffeeFilterName">Nombre o marca del café</string>
+    <string name="scan_the_barcode_of_the_coffee">Escanea el código de barras del café</string>
 </resources>

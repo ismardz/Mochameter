@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.SearchView;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
@@ -17,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.gms.common.util.Strings;
 import com.irdz.mochameter.CoffeeDetail;
 import com.irdz.mochameter.RankingListAdapter;
 import com.irdz.mochameter.ReviewCoffee;
@@ -32,10 +35,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RankingFragment extends Fragment {
     private FragmentRankingBinding binding;
     private int page = 0;
+
+    private String filterText;
 
     private CoffeeOrder order = CoffeeOrder.GLOBAL_SCORE;
     private boolean reversed = false;
@@ -56,25 +62,28 @@ public class RankingFragment extends Fragment {
     private FragmentActivity activity;
     private boolean myEvaluations;
 
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        binding = FragmentRankingBinding.inflate(inflater, container, false);
-        intresume = 0;
+        if(binding == null) {
+            binding = FragmentRankingBinding.inflate(inflater, container, false);
 
-        View root = binding.getRoot();
+            intresume = 0;
 
-        reverseCheckBoxLogic();
+            reverseCheckBoxLogic();
 
-        fillSpinner();
+            fillSpinner();
 
-        itemClickedLogic();
+            itemClickedLogic();
 
-        loadMoreOnScroll();
+            loadMoreOnScroll();
 
-        return root;
+            searchViewLogic();
+
+        }
+
+        return binding.getRoot();
     }
 
     @Override
@@ -125,8 +134,8 @@ public class RankingFragment extends Fragment {
     public void onResume() {
         super.onResume();
         intresume++;
-        if(intresume > 1) {
-            if(listComplete && page == 1) {
+        if(intresume >= 1) {
+            if(listComplete && page > 0) {
                 page = 0;
                 listComplete = false;
             }
@@ -218,12 +227,16 @@ public class RankingFragment extends Fragment {
 
         @Override
         protected List<Review> doInBackground(Void... voids) {
+            if(ReviewCoffee.reviewUpdated) {
+                resetCriteriaToLoad();
+                ReviewCoffee.reviewUpdated = false;
+            }
             // Run the database query in the background
             if(myEvaluations) {
                 String androidID = Settings.Secure.getString(getActivityAux().getContentResolver(), Settings.Secure.ANDROID_ID);
-                return ReviewService.getInstance().findMyEvaluationsOrderByPaged(order, reversed, page, androidID);
+                return ReviewService.getInstance().findMyEvaluationsOrderByPaged(filterText, order, reversed, page, androidID);
             } else {
-                return ReviewService.getInstance().findAvgOrderByPaged(order, reversed, page);
+                return ReviewService.getInstance().findAvgOrderByPaged(filterText, order, reversed, page);
             }
         }
 
@@ -243,6 +256,7 @@ public class RankingFragment extends Fragment {
                 .map(RankingListAdapter::getMReviews);
 
             addedReviewsOpt.ifPresent(addedReviews -> {
+                AtomicBoolean objectChanged = new AtomicBoolean(false);
                 for (Review newReview : reviewsLoaded) {
                     if(addedReviews.stream().noneMatch(review -> review.getCoffee().getId() == newReview.getCoffee().getId())) {
                         reviewsToAdd.add(newReview);
@@ -251,10 +265,33 @@ public class RankingFragment extends Fragment {
                         reviewToUpdate.ifPresent(rvw -> {
                             int indexToRefresh = addedReviews.indexOf(rvw);
                             if(indexToRefresh != -1) {
-                                addedReviews.set(indexToRefresh, newReview);
+                                Review objectToRefresh = addedReviews.get(indexToRefresh);
+                                if(objectToRefresh.getCoffee().getId().compareTo(newReview.getCoffee().getId()) == 0 &&
+                                    !objectToRefresh.equals(newReview)) {
+                                    addedReviews.set(indexToRefresh, newReview);
+                                    objectChanged.set(true);
+                                }
                             }
                         });
                     }
+                }
+                if(objectChanged.get()) {
+                    addedReviews.sort((o1, o2) -> {
+                        switch(order){
+                            case GLOBAL_SCORE:
+                                return reversed? o1.getScore().compareTo(o2.getScore()) : o2.getScore().compareTo(o1.getScore());
+                            case AROMA:
+                                return reversed? o1.getAroma().compareTo(o2.getAroma()) : o2.getAroma().compareTo(o1.getAroma());
+                            case ACIDITY:
+                                return reversed? o1.getAcidity().compareTo(o2.getAcidity()) : o2.getAcidity().compareTo(o1.getAcidity());
+                            case BODY:
+                                return reversed? o1.getBody().compareTo(o2.getBody()) : o2.getBody().compareTo(o1.getBody());
+                            case AFTERTASTE:
+                                return reversed? o1.getAftertaste().compareTo(o2.getAftertaste()): o2.getAftertaste().compareTo(o1.getAftertaste());
+                            default:
+                                return 0;
+                        }
+                    });
                 }
                 int sizeBefore = addedReviews.size();
                 getActivityAux().runOnUiThread(() -> {
@@ -281,6 +318,32 @@ public class RankingFragment extends Fragment {
             showLoading(View.INVISIBLE);
 
         }
+    }
+
+    private void searchViewLogic() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(final String query) {
+                if(!Strings.isEmptyOrWhitespace(query)) {
+                    filterText = query;
+                    page = 0;
+                    newFilter = true;
+                    refreshRanking();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String newText) {
+                if(TextUtils.isEmpty(newText) && filterText != null) {
+                    filterText = null;
+                    page = 0;
+                    newFilter = true;
+                    refreshRanking();
+                }
+                return false;
+            }
+        });
     }
 
     public void setActivity(final FragmentActivity activity) {

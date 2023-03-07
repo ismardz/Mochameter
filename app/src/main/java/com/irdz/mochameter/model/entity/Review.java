@@ -25,4 +25,16 @@ public class Review implements Serializable {
     @DatabaseField private Double body;
     @DatabaseField private Double aftertaste;
     @DatabaseField private Double score;
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof Review)) {
+            return false;
+        }
+        Review r = (Review) o;
+        return aroma.compareTo(r.getAroma()) == 0 && acidity.compareTo(r.getAcidity()) == 0 && body.compareTo(r.getBody()) == 0 &&
+            aftertaste.compareTo(r.getAftertaste()) == 0 && score.compareTo(r.getScore()) == 0;
+    }
+
+
 }

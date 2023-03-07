@@ -8,7 +8,6 @@
     android:paddingVertical="10dp"
     tools:context=".RankingListAdapter">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <ImageView
         android:id="@+id/ivCoffeeRanking"

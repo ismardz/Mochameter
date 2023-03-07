@@ -14,7 +14,7 @@ public interface ReviewDao extends Dao<Review, Integer> {
 
     Review findByCoffeIdAvg(Integer coffeeId);
 
-    List<Review> findByAvgOrderBy(CoffeeOrder order, Boolean reversed, Integer page);
+    List<Review> findByAvgOrderBy(String queryNameBrand, CoffeeOrder order, Boolean reversed, Integer page);
 
-    List<Review> findMyEvaluationsOrderByPaged(CoffeeOrder order, Boolean reversed, Integer page, final String androidId);
+    List<Review> findMyEvaluationsOrderByPaged(String queryNameBrand, CoffeeOrder order, Boolean reversed, Integer page, final String androidId);
 }

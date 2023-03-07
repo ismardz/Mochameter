@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,8 +12,22 @@
         android:layout_height="match_parent"
         android:elevation="1dp">
 
-
     </androidx.camera.view.PreviewView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="2dp">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="50dp"
+            android:text="@string/scan_the_barcode_of_the_coffee"
+            android:textSize="20dp" />
+    </FrameLayout>
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
@@ -50,7 +63,7 @@
         android:layout_height="wrap_content"
         android:elevation="3dp"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_scan_id_test"
+        ads:adUnitId="@string/banner_scan_id"
         ads:layout_constraintBottom_toBottomOf="@id/previewView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

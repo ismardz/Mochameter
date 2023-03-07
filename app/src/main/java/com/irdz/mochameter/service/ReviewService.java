@@ -30,19 +30,21 @@ public class ReviewService {
     }
 
     public List<Review> findAvgOrderByPaged(
+        final String queryNameBrand,
         final CoffeeOrder order,
         final Boolean reversed,
         final Integer page
     ) {
         List<Review> reviews = new ArrayList<>();
         ExecutorUtils.runCallables(() -> {
-            reviews.addAll(AppDatabase.getInstance().reviewDao.findByAvgOrderBy(order, reversed, page));
+            reviews.addAll(AppDatabase.getInstance().reviewDao.findByAvgOrderBy(queryNameBrand, order, reversed, page));
             return null;
         });
         return reviews;
     }
 
     public List<Review> findMyEvaluationsOrderByPaged(
+        final String queryNameBrand,
         final CoffeeOrder order,
         final Boolean reversed,
         final Integer page,
@@ -51,7 +53,7 @@ public class ReviewService {
         List<Review> reviews = new ArrayList<>();
         ExecutorUtils.runCallables(() -> {
             reviews.addAll(AppDatabase.getInstance().reviewDao
-                .findMyEvaluationsOrderByPaged(order, reversed, page, androidId));
+                .findMyEvaluationsOrderByPaged(queryNameBrand, order, reversed, page, androidId));
             return null;
         });
         return reviews;

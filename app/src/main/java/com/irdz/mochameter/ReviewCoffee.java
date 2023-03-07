@@ -45,6 +45,7 @@ public class ReviewCoffee extends AppCompatActivity {
     private InterstitialAd mInterstitialAd;
 
     public static boolean finish = false;
+    public static boolean reviewUpdated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,14 @@ public class ReviewCoffee extends AppCompatActivity {
         loadAd();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(!finish) {
+            finish = true;
+        }
+    }
+
     private void fillCoffeInfo(
         final OpenFoodFactsResponse coffeeDetail,
         final Coffee coffeeDatabase,
@@ -108,15 +117,20 @@ public class ReviewCoffee extends AppCompatActivity {
                 .coffee(coffeeByBarCode)
                 .build();
 
-            ReviewService.getInstance().insertOrUpdate(revw);
+            if(review == null || !review.equals(revw)) {
+                ReviewService.getInstance().insertOrUpdate(revw);
 
-            CoffeeDetail.coffeeDatabase = coffeeByBarCode;
+                CoffeeDetail.coffeeDatabase = coffeeByBarCode;
 
-            finish = true;
+                finish = true;
 
-            showAd();
+                showAd();
 
+                reviewUpdated = true;
+
+            }
             onBackPressed();
+
         });
 
     }
@@ -187,7 +201,7 @@ public class ReviewCoffee extends AppCompatActivity {
     private void loadAd() {
         AdRequest adRequest = new AdRequest.Builder().build();
         //TODO
-        InterstitialAd.load(this, getString(R.string.testInterstitialAd_id), adRequest,
+        InterstitialAd.load(this, getString(R.string.interstitialAd_id), adRequest,
             new InterstitialAdLoadCallback() {
                 @Override
                 public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {

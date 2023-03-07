@@ -2,6 +2,7 @@ package com.irdz.mochameter.dao.impl;
 
 import android.content.ContextWrapper;
 
+import com.google.android.gms.common.util.Strings;
 import com.irdz.mochameter.config.AppDatabase;
 import com.irdz.mochameter.dao.ReviewDao;
 import com.irdz.mochameter.model.entity.Coffee;
@@ -71,7 +72,7 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
 
     @Override
     public Review findByCoffeIdAvg(final Integer coffeeId) {
-        String query = buildQueryAvg(coffeeId, null, null, null);
+        String query = buildQueryAvg(coffeeId, null, null, null, null);
         try {
             GenericRawResults<String[]> results = AppDatabase.getInstance().reviewDao.queryRaw(query);
             String[] row = results.getFirstResult();
@@ -83,16 +84,18 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
 
     @Override
     public List<Review> findByAvgOrderBy(
+        final String queryNameBrand,
         final CoffeeOrder order,
         final Boolean reversed,
         final Integer page
     ) {
-        String query = buildQueryAvg(null, order, reversed, page);
+        String query = buildQueryAvg(null, queryNameBrand, order, reversed, page);
         return getReviewList(query);
     }
 
     @Override
     public List<Review> findMyEvaluationsOrderByPaged(
+        final String queryNameBrand,
         final CoffeeOrder order,
         final Boolean reversed,
         final Integer page,
@@ -101,8 +104,12 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
             " from public.review review, public.coffee coffee, public.user usu " +
             " where review.coffee_id = coffee.id  " +
             " and review.user_id = usu.id  " +
-            " and usu.android_id = '" + androidId + "' " +
-            " group by coffee_id, aroma, acidity, body, aftertaste, score, coffee_name, brand, image_url   ";
+            " and usu.android_id = '" + androidId + "' ";
+
+        query = setFilterNameBrand(queryNameBrand, query);
+
+        query += " group by coffee_id, aroma, acidity, body, aftertaste, score, coffee_name, brand, image_url   ";
+
         query = setOrderBy(order, reversed, query);
 
         query = setPage(page, query);
@@ -138,6 +145,7 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
 
     private String buildQueryAvg(
         final Integer coffeeId,
+        final String queryNameBrand,
         final CoffeeOrder order,
         final Boolean reversed,
         final Integer page
@@ -155,9 +163,11 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
             " from public.review review, public.coffee coffee " +
             " where review.coffee_id = coffee.id ";
 
-            if(coffeeId != null) {
-                query += " and coffee_id = " + coffeeId;
-            }
+        if(coffeeId != null) {
+            query += " and coffee_id = " + coffeeId;
+        }
+
+        query = setFilterNameBrand(queryNameBrand, query);
 
         query += " group by coffee_id, coffee_name, brand, image_url ";
 
@@ -165,6 +175,14 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
 
         query = setPage(page, query);
 
+        return query;
+    }
+
+    private String setFilterNameBrand(final String queryNameBrand, String query) {
+        if(!Strings.isEmptyOrWhitespace(queryNameBrand)) {
+            query += " and (lower(coffee.coffee_name) LIKE '%" + queryNameBrand + "%' " +
+                " or lower(coffee.brand) LIKE '%" + queryNameBrand + "%') ";
+        }
         return query;
     }
 

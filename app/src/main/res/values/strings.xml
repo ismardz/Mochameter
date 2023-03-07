@@ -20,7 +20,7 @@
 
     <string name="banner_scan_id">ca-app-pub-4644948724078988/1547766212</string>
     <string name="banner_scan_id_test">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="not_coffee">Coffee not found.\nTap here to register it.</string>
+    <string name="not_coffee">Coffee not found.\nTap here to register it in Open Food Facts.</string>
     <string name="acidity">Acidity</string>
     <string name="aroma">Aroma</string>
     <string name="body">Body</string>
@@ -31,7 +31,9 @@
     <string name="no_reviews">This coffee has not reviews.\nBe the first one to review it!</string>
     <string name="sort_by">Sort by</string>
     <string name="reverse">Reverse</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="soon">Soon</string>
+    <string name="soon">Coming soon</string>
+    <string name="reviewCoffee">Review coffee</string>
+    <string name="coffeeDetail">Coffee detail</string>
+    <string name="coffeeFilterName">Coffee name or brand</string>
+    <string name="scan_the_barcode_of_the_coffee">Scan the barcode of the coffee</string>
 </resources>
