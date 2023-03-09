@@ -55,8 +55,6 @@ public class ScanActivity extends AppCompatActivity {
     private static final String BEVERAGE_TAG = "en:beverages";
     private ActivityScanBinding binding;
 
-    private AdView bannerScan;
-
     private FrameLayout frameLayout;
 
     private static final Set<String> NOT_COFFEE_BARCODES = new HashSet<>();
@@ -90,12 +88,9 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     private void loadBanner() {
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            bannerScan = findViewById(R.id.banner_scan);
-            AdRequest adRequest = new AdRequest.Builder().build();
-            bannerScan.loadAd(adRequest);
-        }, 500);
+        AdView bannerScan = findViewById(R.id.banner_scan);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        bannerScan.loadAd(adRequest);
     }
 
     private void bindCamera() {

@@ -5,12 +5,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.HeaderViewListAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -21,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.common.util.Strings;
+import com.irdz.mochameter.R;
 import com.irdz.mochameter.databinding.FragmentRankingBinding;
 import com.irdz.mochameter.model.entity.Review;
 import com.irdz.mochameter.service.ReviewService;
@@ -62,6 +67,10 @@ public class RankingFragment extends Fragment {
     private FragmentActivity activity;
     private boolean myEvaluations;
 
+    private static Float scanButtonInitialY = null;
+
+    private TextView footerView;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -70,6 +79,8 @@ public class RankingFragment extends Fragment {
             binding = FragmentRankingBinding.inflate(inflater, container, false);
 
             intresume = 0;
+
+            createFooterView();
 
             reverseCheckBoxLogic();
 
@@ -99,12 +110,14 @@ public class RankingFragment extends Fragment {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 // Check if we've reached the bottom
-                if (!isLoadingNextPage && totalItemCount != 0 && firstVisibleItem + visibleItemCount == totalItemCount) {
+                int lastItem = firstVisibleItem + visibleItemCount;
+                if (!isLoadingNextPage && totalItemCount != 0 && lastItem == totalItemCount) {
                     if(!listComplete) {
                         page++;
                         refreshRanking();
                     }
                 }
+                moveFloatinButtonWhenOverlaysOnFooterView(totalItemCount, lastItem);
             }
 
             @Override
@@ -114,19 +127,42 @@ public class RankingFragment extends Fragment {
         });
     }
 
+    private void moveFloatinButtonWhenOverlaysOnFooterView(final int totalItemCount, final int lastItem) {
+        if(!myEvaluations && getActivityAux() != null &&  getActivityAux().findViewById(R.id.btn_scan) != null) {
+            View floattinButton = getActivityAux().findViewById(R.id.btn_scan);
+            if (lastItem == totalItemCount) {
+                if(scanButtonInitialY == null) {
+                    scanButtonInitialY = floattinButton.getY();
+                }
+                if((floattinButton.getY() + floattinButton.getHeight() >= footerView.getY()
+                    && footerView.getY() + floattinButton.getHeight() + footerView.getHeight() >= scanButtonInitialY)) {
+                    floattinButton.setY(footerView.getY() + 40);
+                } else {
+                    floattinButton.setY(scanButtonInitialY);
+                }
+            } else if (floattinButton.getY() != scanButtonInitialY){
+                floattinButton.setY(scanButtonInitialY);
+            }
+        } else if(scanButtonInitialY != null && getActivityAux().findViewById(R.id.btn_scan).getY() != scanButtonInitialY) {
+            getActivityAux().findViewById(R.id.btn_scan).setY(scanButtonInitialY);
+        }
+    }
+
     private void itemClickedLogic() {
         binding.lvCoffee.setOnItemClickListener((parent, view, position, id) -> {
             Review review = (Review) binding.lvCoffee.getItemAtPosition(position);
-            Intent intent;
-            if(myEvaluations) {
-                intent = new Intent(getActivityAux(), ReviewCoffee.class);
-                intent.putExtra("coffeeDatabase", review.getCoffee());
+            if(review != null) {
+                Intent intent;
+                if(myEvaluations) {
+                    intent = new Intent(getActivityAux(), ReviewCoffee.class);
+                    intent.putExtra("coffeeDatabase", review.getCoffee());
+                    getActivityAux().startActivity(intent);
+                } else {
+                    intent = new Intent(getActivityAux(), CoffeeDetail.class);
+                    intent.putExtra("reviewAvg", review);
+                }
                 getActivityAux().startActivity(intent);
-            } else {
-                intent = new Intent(getActivityAux(), CoffeeDetail.class);
-                intent.putExtra("reviewAvg", review);
             }
-            getActivityAux().startActivity(intent);
         });
     }
 
@@ -242,11 +278,20 @@ public class RankingFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Review> reviewsLoaded) {
+            RankingListAdapter adapter = null;
+            ListView lvCoffee = binding.lvCoffee;
+
             if(newFilter) {
-                binding.lvCoffee.setAdapter(null);
+                lvCoffee.setAdapter(null);
             }
 
-            RankingListAdapter adapter = (RankingListAdapter) binding.lvCoffee.getAdapter();
+            ListAdapter actualAdapter = lvCoffee.getAdapter();
+
+            if(actualAdapter instanceof RankingListAdapter) {
+                adapter = (RankingListAdapter) actualAdapter;
+            } else if (actualAdapter instanceof HeaderViewListAdapter) {
+                adapter = (RankingListAdapter) ((HeaderViewListAdapter) actualAdapter).getWrappedAdapter();
+            }
 
 
             List<Review> reviewsToAdd = new ArrayList<>();
@@ -255,6 +300,7 @@ public class RankingFragment extends Fragment {
                 Optional.ofNullable(adapter)
                 .map(RankingListAdapter::getMReviews);
 
+            RankingListAdapter finalAdapter = adapter;
             addedReviewsOpt.ifPresent(addedReviews -> {
                 AtomicBoolean objectChanged = new AtomicBoolean(false);
                 for (Review newReview : reviewsLoaded) {
@@ -296,7 +342,7 @@ public class RankingFragment extends Fragment {
                 int sizeBefore = addedReviews.size();
                 getActivityAux().runOnUiThread(() -> {
                     addedReviews.addAll(reviewsToAdd);
-                    Optional.ofNullable(adapter).ifPresent(aa -> aa.notifyDataSetChanged());
+                    Optional.ofNullable(finalAdapter).ifPresent(aa -> aa.notifyDataSetChanged());
                 });
                 if(addedReviews.size() == sizeBefore && page > 0) {
                     listComplete = true;
@@ -308,13 +354,14 @@ public class RankingFragment extends Fragment {
             if(adapter == null) {
                 getActivityAux().runOnUiThread(() -> {
                     RankingListAdapter adptr = new RankingListAdapter(getActivityAux(), reviewsLoaded);
-                    binding.lvCoffee.setAdapter(adptr);
+                    lvCoffee.setAdapter(adptr);
                     adptr.notifyDataSetChanged();
                 });
             }
             isLoadingNextPage = false;
             newFilter = false;
             forceLoad = false;
+
             showLoading(View.INVISIBLE);
 
         }
@@ -344,6 +391,22 @@ public class RankingFragment extends Fragment {
                 return false;
             }
         });
+    }
+
+    private void createFooterView() {
+        if(!myEvaluations) {
+            footerView = new TextView(getActivityAux());
+
+            footerView.setText(R.string.footer_ranking);
+
+            footerView.setGravity(Gravity.CENTER);
+
+            footerView.setPadding(20, 20, 20, 20);
+
+            footerView.setMaxHeight(200);
+
+            binding.lvCoffee.addFooterView(footerView);
+        }
     }
 
     public void setActivity(final FragmentActivity activity) {

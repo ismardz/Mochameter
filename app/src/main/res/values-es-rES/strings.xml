@@ -11,6 +11,7 @@
     <string name="title_activity_scan">Escaner de códigos</string>
     <string name="error">error</string>
     <string name="banner_scan_id">ca-app-pub-4644948724078988/1547766212</string>
+    <string name="banner_main_id">ca-app-pub-4644948724078988/8718762928</string>
     <string name="banner_scan_id_test">ca-app-pub-3940256099942544/6300978111</string>
     <string name="not_coffee">Producto no encontrado.\nPulsa aquí para registrarlo.</string>
     <string name="acidity">Acidez</string>
@@ -39,4 +40,5 @@
     <string name="not_classified_coffee">Producto no catalogado como café</string>
     <string name="barcode">Código de barras</string>
     <string name="verify_barcode">Verifica que el código de barras coincide con el del café que has escaneado. Si no coinciden escanéalo de nuevo. (Ignora los ceros a la izquierda)</string>
+    <string name="footer_ranking">Si no puedes encontrar tu café significa que todavía no ha sido evaluado. Sé el primero escaneando su código de barras!</string>
 </resources>

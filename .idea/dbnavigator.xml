@@ -25,7 +25,10 @@
 
 --ALTER TABLE public.USER ADD COLUMN password VARCHAR(255);
 
-ALTER TABLE public.USER RENAME COLUMN mac_address TO android_id;
+--ALTER TABLE public.USER RENAME COLUMN mac_address TO android_id;
+
+--ALTER TABLE public.USER ADD CONSTRAINT constraint_name UNIQUE (android_id);
+
 
 
 --CREATE SEQUENCE coffee_id_seq;
@@ -36,6 +39,8 @@ ALTER TABLE public.USER RENAME COLUMN mac_address TO android_id;
 --  brand VARCHAR(255),
 --  barcode VARCHAR(255) UNIQUE
 --)
+
+--ALTER TABLE public.COFFEE ADD COLUMN image_url VARCHAR;
 
 --CREATE SEQUENCE review_id_seq;
 --
@@ -48,19 +53,57 @@ ALTER TABLE public.USER RENAME COLUMN mac_address TO android_id;
 --  body       DECIMAL(2,1),
 --  aftertaste DECIMAL(2,1),
 --  score      DECIMAL(2,1)
---)]]></console>
-      <console name="mochameter 1" type="STANDARD" schema="mochameter" session="Main"><![CDATA[select 
-null as id, 
-null as user_id, 
-coffee_id, 
-avg(aroma) as aroma,
-avg(acidity) as acidity,
-avg(body) as body,
-avg(aftertaste) as aftertaste,
-avg(score) as score
-from public.review 
-where coffee_id = 4
-group by coffee_id;]]></console>
+--)
+
+drop table public.coffee_creators;
+
+--CREATE SEQUENCE coffee_creators_id_seq;
+--
+CREATE TABLE public.coffee_creators (
+    id INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('coffee_creators_id_seq'),
+    android_id VARCHAR(255),
+    barcode VARCHAR(255)
+);]]></console>
+      <console name="mochameter 1" type="STANDARD" schema="mochameter" session="Main"><![CDATA[select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as body, avg(aftertaste) as aftertaste, avg(score) as score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url  
+from public.review review, public.coffee coffee  
+where review.coffee_id = coffee.id  
+group by coffee_id, coffee_name, brand, image_url  
+order by score desc  
+LIMIT 4 OFFSET 0;
+
+
+select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as body, avg(aftertaste) as aftertaste, avg(score) as score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url  from public.review review, public.coffee coffee  
+where review.coffee_id = coffee.id  
+group by coffee_id, coffee_name, brand, image_url  
+order by score desc  
+LIMIT 4 OFFSET 4;
+
+select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as body, avg(aftertaste) as aftertaste, avg(score) as score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url  from public.review review, public.coffee coffee  
+where review.coffee_id = coffee.id  
+group by coffee_id, coffee_name, brand, image_url  
+order by score desc;
+
+select  coffee_id, aroma, acidity, body, aftertaste, score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url  
+from public.review review, public.coffee coffee, public.user usu
+where review.coffee_id = coffee.id 
+and review.user_id = usu.id 
+and usu.android_id = 'a66778c048275295'
+group by coffee_id, aroma, acidity, body, aftertaste, score, coffee_name, brand, image_url  
+order by score desc;
+
+select  coffee_id, aroma, acidity, body, 
+aftertaste, 
+score,  
+coffee.coffee_name coffee_name,  
+coffee.brand brand,  coffee.image_url image_url    
+from public.review review, public.coffee coffee, public.user usu  
+where review.coffee_id = coffee.id   and review.user_id = usu.id   and usu.android_id = 'c441ef779adcde5d'  
+group by coffee_id, aroma, acidity, body, aftertaste, score, coffee_name, brand, image_url    
+order by acidity desc;
+
+select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as body, avg(aftertaste) as aftertaste, avg(score) as score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url  from public.review review, public.coffee coffee  where review.coffee_id = coffee.id  group by coffee_id, coffee_name, brand, image_url  order by score asc  LIMIT 4 OFFSET 0;
+
+select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as body, avg(aftertaste) as aftertaste, avg(score) as score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url  from public.review review, public.coffee coffee  where review.coffee_id = coffee.id  and (lower(coffee.coffee_name) LIKE '%drome%'  or lower(coffee.brand) LIKE '%drome%')  group by coffee_id, coffee_name, brand, image_url  order by score desc  LIMIT 4 OFFSET 0;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -68,12 +111,16 @@ group by coffee_id;]]></console>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files>
-      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/coffee" />
-      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/user" />
       <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/review" />
+      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/coffee" />
+      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/coffee_creators" />
+      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/user" />
     </open-files>
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="b86864aa-10db-4153-a8f9-9a971555a868" dataset="public.coffee_creators" active-filter-id="9914cd28-8bf3-4bde-8e43-269f323c9937">
+      <filter id="9914cd28-8bf3-4bde-8e43-269f323c9937" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
     <filter-actions connection-id="b86864aa-10db-4153-a8f9-9a971555a868" dataset="public.review" active-filter-id="a1b30a2d-146d-44ef-bb7a-2621c591fdd0">
       <filter id="a1b30a2d-146d-44ef-bb7a-2621c591fdd0" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
