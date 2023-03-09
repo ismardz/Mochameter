@@ -11,9 +11,10 @@
         android:icon="@drawable/ic_evaluations"
         android:title="@string/title_evaluations" />
 
-    <item
-        android:id="@+id/navigation_profile"
-        android:icon="@drawable/ic_profile"
-        android:title="@string/title_profile" />
+<!--    -->
+<!--    <item-->
+<!--        android:id="@+id/navigation_profile"-->
+<!--        android:icon="@drawable/ic_profile"-->
+<!--        android:title="@string/title_profile" />-->
 
 </menu>

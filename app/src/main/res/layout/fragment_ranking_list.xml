@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:paddingVertical="10dp"
-    tools:context=".RankingListAdapter">
+    tools:context=".ui.ranking.RankingListAdapter">
 
 
     <ImageView
@@ -14,7 +14,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:src="@drawable/ic_logo"
+        android:src="@android:drawable/ic_menu_report_image"
+        android:foregroundGravity="center_vertical|center_horizontal"
         app:layout_constraintHeight="138.5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth="150dp" />

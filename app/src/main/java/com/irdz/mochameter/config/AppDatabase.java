@@ -1,8 +1,10 @@
 package com.irdz.mochameter.config;
 
+import com.irdz.mochameter.dao.CoffeeCreatorDao;
 import com.irdz.mochameter.dao.CoffeeDao;
 import com.irdz.mochameter.dao.ReviewDao;
 import com.irdz.mochameter.dao.UserDao;
+import com.irdz.mochameter.dao.impl.CoffeeCreatorDaoImpl;
 import com.irdz.mochameter.dao.impl.CoffeeDaoImpl;
 import com.irdz.mochameter.dao.impl.ReviewDaoImpl;
 import com.irdz.mochameter.dao.impl.UserDaoImpl;
@@ -25,6 +27,7 @@ public class AppDatabase {
     public UserDao userDao;
     public CoffeeDao coffeeDao;
     public ReviewDao reviewDao;
+    public CoffeeCreatorDao coffeeCreatorDao;
 
     public static AppDatabase getInstance() {
         if (instance == null) {
@@ -47,6 +50,7 @@ public class AppDatabase {
                 instance.userDao = UserDaoImpl.getInstance(connection);
                 instance.coffeeDao = CoffeeDaoImpl.getInstance(connection);
                 instance.reviewDao = ReviewDaoImpl.getInstance(connection);
+                instance.coffeeCreatorDao = CoffeeCreatorDaoImpl.getInstance(connection);
                 return instance;
             } catch (SQLException e) {
                 throw new RuntimeException(e);

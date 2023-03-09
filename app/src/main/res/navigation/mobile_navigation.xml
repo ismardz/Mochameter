@@ -17,9 +17,10 @@
         android:label="@string/title_evaluations"
         tools:layout="@layout/fragment_dashboard" />
 
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.irdz.mochameter.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_notifications" />
+<!--    TODO -->
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_profile"-->
+<!--        android:name="com.irdz.mochameter.ui.profile.ProfileFragment"-->
+<!--        android:label="@string/title_profile"-->
+<!--        tools:layout="@layout/fragment_notifications" />-->
 </navigation>

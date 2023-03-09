@@ -1,4 +1,4 @@
-package com.irdz.mochameter;
+package com.irdz.mochameter.ui.scan;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,31 +31,41 @@ import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.irdz.mochameter.ui.coffeedetail.CoffeeDetail;
+import com.irdz.mochameter.R;
 import com.irdz.mochameter.databinding.ActivityScanBinding;
 import com.irdz.mochameter.model.openfoodfacts.OpenFoodFactsResponse;
+import com.irdz.mochameter.model.openfoodfacts.Product;
 import com.irdz.mochameter.service.OpenFoodFactsService;
+import com.irdz.mochameter.ui.registercoffee.RegisterCoffee;
 
+import java.io.Serializable;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 public class ScanActivity extends AppCompatActivity {
 
-    private static final String COFFEE_TAG = "en:coffees";
+    private static final String COFFEES_TAG = "en:coffees";
+    private static final String COFFEE_TAG = "en:coffee";
+    private static final String BEVERAGE_TAG = "en:beverages";
     private ActivityScanBinding binding;
 
     private AdView bannerScan;
 
     private FrameLayout frameLayout;
 
-    private static Toast toast;
-
     private static final Set<String> NOT_COFFEE_BARCODES = new HashSet<>();
     public static boolean coffeeRead = false;
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 66;
+
+    private String barcode;
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +79,12 @@ public class ScanActivity extends AppCompatActivity {
         frameLayout.setVisibility(View.INVISIBLE);
 
         TextView tvMessage = binding.tvMessage;
-        tvMessage.setOnClickListener(v -> launchOpenFoodFacts());
+//        tvMessage.setOnClickListener(v -> launchOpenFoodFacts());
+        tvMessage.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RegisterCoffee.class);
+            intent.putExtra("barcode", barcode);
+            startActivity(intent);
+        });
 
         bindCamera();
     }
@@ -155,20 +170,35 @@ public class ScanActivity extends AppCompatActivity {
         }
     }
 
-    private void readBarcodeFromOpenFoodFacts(final String barcode) {
+    public void readBarcodeFromOpenFoodFacts(final String barcode) {
         OpenFoodFactsResponse productByBarcode = OpenFoodFactsService.getInstance().findProductByBarcode(barcode);
-        Boolean isCoffee = Optional.ofNullable(productByBarcode)
-            .map(pbbc -> pbbc.product)
+        Optional<Product> product = Optional.ofNullable(productByBarcode)
+            .map(pbbc -> pbbc.product);
+        product.map(p -> p.labels_tags)
+            .map(strings -> strings.contains(COFFEES_TAG));
+        Boolean isCoffee = product
             .map(p -> p.categories_tags)
-            .map(strings -> strings.contains(COFFEE_TAG))
-            .orElse(false);
+            .map(strings -> strings.contains(COFFEES_TAG))
+            .filter(Boolean::booleanValue)
+            .orElseGet(() -> product.map(p -> p.labels_tags)
+                .map(strings -> strings.contains(COFFEES_TAG))
+                .filter(Boolean::booleanValue)
+                .orElseGet(() -> product.map(p -> p.categories_tags.contains(BEVERAGE_TAG) && p.ingredients.stream().anyMatch(i -> i.id.equalsIgnoreCase(COFFEE_TAG))).orElse(false))
+            );
         if(isCoffee && !coffeeRead) {
             coffeeRead = true;
             loadCoffee(productByBarcode);
         } else if(!isCoffee && !NOT_COFFEE_BARCODES.contains(barcode)) {
             NOT_COFFEE_BARCODES.add(barcode);
             new Handler(Looper.getMainLooper()).postDelayed(() -> NOT_COFFEE_BARCODES.remove(barcode), 5000);
-            showMessage();
+            this.barcode = barcode;
+            if(productByBarcode == null) {
+                showAToast("error");
+            } else if(productByBarcode.product == null) {
+                showMessage();
+            } else {
+                showAToast(getString(R.string.not_classified_coffee));
+            }
         }
     }
 
@@ -201,6 +231,29 @@ public class ScanActivity extends AppCompatActivity {
                 // Play Store app not found on the device, open web browser to Open Food Facts app page
                 Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName));
                 startActivity(webIntent);
+            }
+        }
+    }
+
+    private void showAToast (final String st){
+        String oldText = Optional.ofNullable(toast)
+            .map(Toast::getView)
+            .map(toast -> (TextView)toast)
+            .map(TextView::getText)
+            .map(CharSequence::toString)
+            .orElse(null);
+        if(toast == null || toast.getView() == null) {
+            if(oldText == null || !oldText.equalsIgnoreCase(st) || !toast.getView().isShown()) {
+                // Create a new TextView for the toast message
+                TextView textView = new TextView(getApplicationContext());
+                textView.setText(st);
+
+                textView.setBackgroundColor(Color.BLACK);
+                textView.setTextColor(Color.WHITE);
+
+                toast = Toast.makeText(this, st, Toast.LENGTH_LONG);
+
+                toast.show();
             }
         }
     }

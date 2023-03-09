@@ -1,4 +1,4 @@
-package com.irdz.mochameter;
+package com.irdz.mochameter.ui.coffeedetail;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,11 +10,14 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.irdz.mochameter.R;
+import com.irdz.mochameter.ui.reviewcoffee.ReviewCoffee;
 import com.irdz.mochameter.model.entity.Coffee;
 import com.irdz.mochameter.model.entity.Review;
 import com.irdz.mochameter.model.openfoodfacts.OpenFoodFactsResponse;
 import com.irdz.mochameter.service.CoffeeService;
 import com.irdz.mochameter.service.ReviewService;
+import com.irdz.mochameter.ui.scan.ScanActivity;
 import com.irdz.mochameter.util.ExecutorUtils;
 import com.squareup.picasso.Picasso;
 
@@ -29,6 +32,8 @@ public class CoffeeDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coffee_detail);
+
+        coffeeDatabase = null;
 
         OpenFoodFactsResponse coffeeDetail = (OpenFoodFactsResponse) getIntent().getSerializableExtra("coffeeDetail");
         Review reviewAvg = (Review) getIntent().getSerializableExtra("reviewAvg");
@@ -64,6 +69,10 @@ public class CoffeeDetail extends AppCompatActivity {
         if(reviewAvg == null) {
             if(coffeeDatabase == null) {
                 coffeeDatabase = CoffeeService.getInstance().findByBarcode(coffeeDetail.code);
+            }
+            if (coffeeDatabase != null && coffeeDatabase.getImageUrl() == null && coffeeDetail.product.image_front_url != null) {
+                coffeeDatabase.setImageUrl(coffeeDetail.product.image_front_url);
+                CoffeeService.getInstance().update(coffeeDatabase);
             }
             Optional.ofNullable(coffeeDatabase)
                 .map(Coffee::getId)
@@ -111,14 +120,15 @@ public class CoffeeDetail extends AppCompatActivity {
         TextView tvBrand = findViewById(R.id.tvBrand);
 
         if(coffeeDetail != null) {
-            Picasso.get().load(coffeeDetail.product.image_front_url).into(ivCoffee);
+            Optional.ofNullable(coffeeDetail.product.image_front_url).map(Picasso.get()::load)
+                .ifPresent(requestCreator -> requestCreator.into(ivCoffee));
             tvName.setText(coffeeDetail.product.product_name);
             tvBrand.setText(coffeeDetail.product.brands);
         } else if(reviewAvg != null) {
-            Picasso.get().load(reviewAvg.getCoffee().getImageUrl()).into(ivCoffee);
+            Optional.ofNullable(reviewAvg.getCoffee().getImageUrl()).map(Picasso.get()::load)
+                .ifPresent(requestCreator -> requestCreator.into(ivCoffee));
             tvName.setText(reviewAvg.getCoffee().getCoffeeName());
             tvBrand.setText(reviewAvg.getCoffee().getBrand());
-
         }
 
     }

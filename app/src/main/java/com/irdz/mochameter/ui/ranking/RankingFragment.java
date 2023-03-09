@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,12 +21,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.common.util.Strings;
-import com.irdz.mochameter.CoffeeDetail;
-import com.irdz.mochameter.RankingListAdapter;
-import com.irdz.mochameter.ReviewCoffee;
 import com.irdz.mochameter.databinding.FragmentRankingBinding;
 import com.irdz.mochameter.model.entity.Review;
 import com.irdz.mochameter.service.ReviewService;
+import com.irdz.mochameter.ui.coffeedetail.CoffeeDetail;
+import com.irdz.mochameter.ui.reviewcoffee.ReviewCoffee;
 import com.irdz.mochameter.util.CoffeeOrder;
 
 import java.util.ArrayList;

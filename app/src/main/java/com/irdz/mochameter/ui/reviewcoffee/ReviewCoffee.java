@@ -1,24 +1,17 @@
-package com.irdz.mochameter;
-
-import static android.content.ContentValues.TAG;
+package com.irdz.mochameter.ui.reviewcoffee;
 
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.irdz.mochameter.R;
 import com.irdz.mochameter.config.AppDatabase;
 import com.irdz.mochameter.dao.impl.UserDaoImpl;
 import com.irdz.mochameter.model.entity.Coffee;
@@ -28,6 +21,8 @@ import com.irdz.mochameter.model.openfoodfacts.OpenFoodFactsResponse;
 import com.irdz.mochameter.service.CoffeeService;
 import com.irdz.mochameter.service.ReviewService;
 import com.irdz.mochameter.service.UserService;
+import com.irdz.mochameter.ui.coffeedetail.CoffeeDetail;
+import com.irdz.mochameter.util.AdUtils;
 import com.irdz.mochameter.util.ExecutorUtils;
 import com.squareup.picasso.Picasso;
 
@@ -80,7 +75,7 @@ public class ReviewCoffee extends AppCompatActivity {
         }
         fillCoffeInfo(coffeeDetail, coffeeDatabase, review.get());
 
-        loadAd();
+        AdUtils.loadAd(getString(R.string.interstitialAdReviewCoffee_id), this, null);
     }
 
     @Override
@@ -102,34 +97,44 @@ public class ReviewCoffee extends AppCompatActivity {
 
         Button btnSendReview = findViewById(R.id.btnSendReview);
         btnSendReview.setOnClickListener(v -> {
+            float acidity = rbAcidity.getRating();
+            float aroma = rbAroma.getRating();
+            float body = rbBody.getRating();
+            float aftertaste = rbAftertaste.getRating();
+            float score = rbScore.getRating();
 
-            User user = getUser();
-            Coffee coffeeByBarCode = getCoffee(coffeeDatabase, coffeeDetail);
+            if(acidity == 0 && aroma == 0 && body == 0 && aftertaste == 0 && score == 0) {
+                Toast.makeText(this, R.string.thatBad, Toast.LENGTH_SHORT);
+            } else {
+                User user = getUser();
+                Coffee coffeeByBarCode = getCoffee(coffeeDatabase, coffeeDetail);
 
-            Review revw = Review.builder()
-                .id(Optional.ofNullable(review).map(Review::getId).orElse(null))
-                .acidity(Double.valueOf(rbAcidity.getRating()))
-                .aroma(Double.valueOf(rbAroma.getRating()))
-                .body(Double.valueOf(rbBody.getRating()))
-                .aftertaste(Double.valueOf(rbAftertaste.getRating()))
-                .score(Double.valueOf(rbScore.getRating()))
-                .user(user)
-                .coffee(coffeeByBarCode)
-                .build();
+                Review revw = Review.builder()
+                    .id(Optional.ofNullable(review).map(Review::getId).orElse(null))
+                    .acidity(Double.valueOf(acidity))
+                    .aroma(Double.valueOf(aroma))
+                    .body(Double.valueOf(body))
+                    .aftertaste(Double.valueOf(aftertaste))
+                    .score(Double.valueOf(score))
+                    .user(user)
+                    .coffee(coffeeByBarCode)
+                    .build();
 
-            if(review == null || !review.equals(revw)) {
-                ReviewService.getInstance().insertOrUpdate(revw);
+                if(review == null || !review.equals(revw)) {
+                    ReviewService.getInstance().insertOrUpdate(revw);
 
-                CoffeeDetail.coffeeDatabase = coffeeByBarCode;
+                    CoffeeDetail.coffeeDatabase = coffeeByBarCode;
 
-                finish = true;
+                    finish = true;
 
-                showAd();
+                    AdUtils.showAd(getString(R.string.interstitialAdReviewCoffee_id), this);
 
-                reviewUpdated = true;
+                    reviewUpdated = true;
 
+                }
+                onBackPressed();
             }
-            onBackPressed();
+
 
         });
 
@@ -180,89 +185,20 @@ public class ReviewCoffee extends AppCompatActivity {
         TextView tvBrand = findViewById(R.id.tvBrand);
 
         if(coffeeDatabase == null) {
-            Picasso.get().load(coffeeDetail.product.image_front_url).into(ivCoffee);
+            Optional.ofNullable(coffeeDetail.product.image_front_url).map(Picasso.get()::load)
+                .ifPresent(requestCreator -> requestCreator.into(ivCoffee));
             tvName.setText(coffeeDetail.product.product_name);
             tvBrand.setText(coffeeDetail.product.brands);
         } else {
-            Picasso.get().load(coffeeDatabase.getImageUrl()).into(ivCoffee);
+            Optional.ofNullable(coffeeDatabase.getImageUrl()).map(Picasso.get()::load)
+                .ifPresent(requestCreator -> requestCreator.into(ivCoffee));
             tvName.setText(coffeeDatabase.getCoffeeName());
             tvBrand.setText(coffeeDatabase.getBrand());
-
         }
 
     }
 
     private String getAndroidId() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-    }
-
-
-
-    private void loadAd() {
-        AdRequest adRequest = new AdRequest.Builder().build();
-        //TODO
-        InterstitialAd.load(this, getString(R.string.interstitialAd_id), adRequest,
-            new InterstitialAdLoadCallback() {
-                @Override
-                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                    // The mInterstitialAd reference will be null until
-                    // an ad is loaded.
-                    mInterstitialAd = interstitialAd;
-                    configureAdd();
-                    Log.i(TAG, "onAdLoaded");
-                }
-
-                @Override
-                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                    // Handle the error
-                    Log.d(TAG, loadAdError.toString());
-                    mInterstitialAd = null;
-                }
-            });
-    }
-
-    private void showAd() {
-        if (mInterstitialAd != null) {
-            mInterstitialAd.show(this);
-        } else {
-            Log.d("TAG", "The interstitial ad wasn't ready yet.");
-        }
-    }
-
-    private void configureAdd() {
-        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
-            @Override
-            public void onAdClicked() {
-                // Called when a click is recorded for an ad.
-                Log.d(TAG, "Ad was clicked.");
-            }
-
-            @Override
-            public void onAdDismissedFullScreenContent() {
-                // Called when ad is dismissed.
-                // Set the ad reference to null so you don't show the ad a second time.
-                Log.d(TAG, "Ad dismissed fullscreen content.");
-                mInterstitialAd = null;
-            }
-
-            @Override
-            public void onAdFailedToShowFullScreenContent(AdError adError) {
-                // Called when ad fails to show.
-                Log.e(TAG, "Ad failed to show fullscreen content.");
-                mInterstitialAd = null;
-            }
-
-            @Override
-            public void onAdImpression() {
-                // Called when an impression is recorded for an ad.
-                Log.d(TAG, "Ad recorded an impression.");
-            }
-
-            @Override
-            public void onAdShowedFullScreenContent() {
-                // Called when ad is shown.
-                Log.d(TAG, "Ad showed fullscreen content.");
-            }
-        });
     }
 }

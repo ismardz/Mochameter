@@ -25,7 +25,7 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
 
     private static ReviewDaoImpl instance;
 
-    private static final int PAGE_LIMIT = 4;
+    private static final int PAGE_LIMIT = 10;
 
     private ReviewDaoImpl(ConnectionSource connectionSource) throws SQLException {
         super(connectionSource, Review.class);

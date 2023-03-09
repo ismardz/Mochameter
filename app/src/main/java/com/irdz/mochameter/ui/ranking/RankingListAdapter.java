@@ -1,4 +1,4 @@
-package com.irdz.mochameter;
+package com.irdz.mochameter.ui.ranking;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.irdz.mochameter.R;
 import com.irdz.mochameter.model.entity.Coffee;
 import com.irdz.mochameter.model.entity.Review;
 import com.irdz.mochameter.service.CoffeeService;
@@ -62,7 +63,8 @@ public class RankingListAdapter extends BaseAdapter {
             review.setCoffee(coffee);
 
             ImageView imageView = finalView.findViewById(R.id.ivCoffeeRanking);
-            Picasso.get().load(coffee.getImageUrl()).into(imageView);
+            Optional.ofNullable(coffee.getImageUrl()).map(Picasso.get()::load)
+                .ifPresent(requestCreator -> requestCreator.into(imageView));
 
             TextView tvName = finalView.findViewById(R.id.tvName);
             tvName.setText(coffee.getCoffeeName());

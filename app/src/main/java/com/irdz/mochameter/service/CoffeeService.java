@@ -51,4 +51,13 @@ public class CoffeeService {
         });
         return coffee.get();
     }
+
+    public int update(final Coffee coffee) {
+        AtomicReference<Integer> coffeear = new AtomicReference<>(0);
+        ExecutorUtils.runCallables(() -> {
+            coffeear.set(AppDatabase.getInstance().coffeeDao.update(coffee));
+            return null;
+        });
+        return coffeear.get();
+    }
 }

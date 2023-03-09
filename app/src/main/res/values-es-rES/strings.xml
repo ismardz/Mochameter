@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="interstitialAd_id">ca-app-pub-4644948724078988/6044783539</string>
+    <string name="interstitialAdReviewCoffee_id">ca-app-pub-4644948724078988/6044783539</string>
+    <string name="interstitialAdCreateProduct_id">ca-app-pub-4644948724078988/2920970328</string>
     <string name="testInterstitialAd_id">ca-app-pub-3940256099942544/1033173712</string>
 
     <string name="app_name">Mochameter</string>
@@ -11,7 +12,7 @@
     <string name="error">error</string>
     <string name="banner_scan_id">ca-app-pub-4644948724078988/1547766212</string>
     <string name="banner_scan_id_test">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="not_coffee">Café no encontrado.\nPulsa aqui para registrarlo en Open Food Facts.</string>
+    <string name="not_coffee">Producto no encontrado.\nPulsa aquí para registrarlo.</string>
     <string name="acidity">Acidez</string>
     <string name="aroma">Aroma</string>
     <string name="body">Cuerpo</string>
@@ -27,4 +28,15 @@
     <string name="coffeeDetail">Detalle del café</string>
     <string name="coffeeFilterName">Nombre o marca del café</string>
     <string name="scan_the_barcode_of_the_coffee">Escanea el código de barras del café</string>
+    <string name="thatBad">No puede ser tan malo... :)</string>
+    <string name="minimun_5char">Longitud mínima 3 caracteres</string>
+    <string name="img_mandatory">La foto del café es obligatoria</string>
+    <string name="hint_brand">Marca</string>
+    <string name="hint_name">Nombre del producto</string>
+    <string name="save">Guardar</string>
+    <string name="error_creating_coffee">Error creando café</string>
+    <string name="be_responsible">Por favor, sé responsable con el contenido que compartes. Una conducta inadecuada puede dar como resultado el bloqueo de tu usuario.</string>
+    <string name="not_classified_coffee">Producto no catalogado como café</string>
+    <string name="barcode">Código de barras</string>
+    <string name="verify_barcode">Verifica que el código de barras coincide con el del café que has escaneado. Si no coinciden escanéalo de nuevo. (Ignora los ceros a la izquierda)</string>
 </resources>
