@@ -55,14 +55,22 @@
 --  score      DECIMAL(2,1)
 --)
 
-drop table public.coffee_creators;
 
 --CREATE SEQUENCE coffee_creators_id_seq;
 --
-CREATE TABLE public.coffee_creators (
-    id INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('coffee_creators_id_seq'),
-    android_id VARCHAR(255),
-    barcode VARCHAR(255)
+--CREATE TABLE public.coffee_creators (
+--    id INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('coffee_creators_id_seq'),
+--    android_id VARCHAR(255),
+--    barcode VARCHAR(255)
+--);
+
+
+--CREATE SEQUENCE banned_id_seq;
+CREATE TABLE public.banned (
+    id INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('banned_id_seq'),
+    user_id INTEGER references public.user (id),
+    date_from date,
+    date_until date
 );]]></console>
       <console name="mochameter 1" type="STANDARD" schema="mochameter" session="Main"><![CDATA[select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as body, avg(aftertaste) as aftertaste, avg(score) as score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url  
 from public.review review, public.coffee coffee  
@@ -103,7 +111,13 @@ order by acidity desc;
 
 select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as body, avg(aftertaste) as aftertaste, avg(score) as score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url  from public.review review, public.coffee coffee  where review.coffee_id = coffee.id  group by coffee_id, coffee_name, brand, image_url  order by score asc  LIMIT 4 OFFSET 0;
 
-select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as body, avg(aftertaste) as aftertaste, avg(score) as score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url  from public.review review, public.coffee coffee  where review.coffee_id = coffee.id  and (lower(coffee.coffee_name) LIKE '%drome%'  or lower(coffee.brand) LIKE '%drome%')  group by coffee_id, coffee_name, brand, image_url  order by score desc  LIMIT 4 OFFSET 0;]]></console>
+select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as body, avg(aftertaste) as aftertaste, avg(score) as score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url  from public.review review, public.coffee coffee  where review.coffee_id = coffee.id  and (lower(coffee.coffee_name) LIKE '%drome%'  or lower(coffee.brand) LIKE '%drome%')  group by coffee_id, coffee_name, brand, image_url  order by score desc  LIMIT 4 OFFSET 0;
+
+
+SELECT * FROM public.banned banned 
+INNER JOIN public.user usu
+WHERE (banned.date_from > '2023-03-10 00:00:00.0' AND banned.date_until < "2023-03-10 00:00:00.0" ) 
+AND (user.android_id = 'a3316d376ae093d1' ) and banned.user_id = usu.id ;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -111,8 +125,8 @@ select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as b
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files>
-      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/review" />
       <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/coffee" />
+      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/review" />
       <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/coffee_creators" />
       <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/user" />
     </open-files>
@@ -124,11 +138,18 @@ select  coffee_id,  avg(aroma) as aroma, avg(acidity) as acidity, avg(body) as b
     <filter-actions connection-id="b86864aa-10db-4153-a8f9-9a971555a868" dataset="public.review" active-filter-id="a1b30a2d-146d-44ef-bb7a-2621c591fdd0">
       <filter id="a1b30a2d-146d-44ef-bb7a-2621c591fdd0" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
+    <filter-actions connection-id="b86864aa-10db-4153-a8f9-9a971555a868" dataset="public.banned" active-filter-id="d4a2c97c-e0d3-4649-a9a0-06fa118acb01">
+      <filter id="d4a2c97c-e0d3-4649-a9a0-06fa118acb01" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
     <filter-actions connection-id="b86864aa-10db-4153-a8f9-9a971555a868" dataset="public.coffee" active-filter-id="50a8b588-1dcf-4d59-a415-c86361ba3b81">
       <filter id="50a8b588-1dcf-4d59-a415-c86361ba3b81" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
-    <filter-actions connection-id="b86864aa-10db-4153-a8f9-9a971555a868" dataset="public.user" active-filter-id="12f260b5-3dc0-42dc-b0f6-13d14d54248d">
-      <filter id="12f260b5-3dc0-42dc-b0f6-13d14d54248d" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    <filter-actions connection-id="b86864aa-10db-4153-a8f9-9a971555a868" dataset="public.user" active-filter-id="bf90d509-7329-4bc3-a15d-8009324d3aa2">
+      <filter id="12f260b5-3dc0-42dc-b0f6-13d14d54248d" name="Filter 2" temporary="false" custom-name="false" type="basic" join-type="AND" />
+      <filter id="a9572c10-e1dd-4aab-8a1c-347169031036" name="a3316d376ae093d1" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="android_id" operator="=" value="a3316d376ae093d1" active="true" />
+      </filter>
+      <filter id="bf90d509-7329-4bc3-a15d-8009324d3aa2" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
   </component>
   <component name="DBNavigator.Project.ExecutionManager">

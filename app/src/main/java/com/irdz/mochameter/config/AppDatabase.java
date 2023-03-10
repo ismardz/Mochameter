@@ -1,9 +1,11 @@
 package com.irdz.mochameter.config;
 
+import com.irdz.mochameter.dao.BannedDao;
 import com.irdz.mochameter.dao.CoffeeCreatorDao;
 import com.irdz.mochameter.dao.CoffeeDao;
 import com.irdz.mochameter.dao.ReviewDao;
 import com.irdz.mochameter.dao.UserDao;
+import com.irdz.mochameter.dao.impl.BannedDaoImpl;
 import com.irdz.mochameter.dao.impl.CoffeeCreatorDaoImpl;
 import com.irdz.mochameter.dao.impl.CoffeeDaoImpl;
 import com.irdz.mochameter.dao.impl.ReviewDaoImpl;
@@ -14,6 +16,8 @@ import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
 
+import lombok.Getter;
+
 public class AppDatabase {
 
     private static final String USER = "isma";
@@ -23,11 +27,19 @@ public class AppDatabase {
             "sslfactory=org.postgresql.ssl.NonValidatingFactory&";
 
     private static AppDatabase instance;
-    public ConnectionSource connection;
-    public UserDao userDao;
-    public CoffeeDao coffeeDao;
-    public ReviewDao reviewDao;
-    public CoffeeCreatorDao coffeeCreatorDao;
+
+    @Getter
+    private ConnectionSource connection;
+    @Getter
+    private UserDao userDao;
+    @Getter
+    private CoffeeDao coffeeDao;
+    @Getter
+    private ReviewDao reviewDao;
+    @Getter
+    private CoffeeCreatorDao coffeeCreatorDao;
+    @Getter
+    private BannedDao bannedDao;
 
     public static AppDatabase getInstance() {
         if (instance == null) {
@@ -51,6 +63,7 @@ public class AppDatabase {
                 instance.coffeeDao = CoffeeDaoImpl.getInstance(connection);
                 instance.reviewDao = ReviewDaoImpl.getInstance(connection);
                 instance.coffeeCreatorDao = CoffeeCreatorDaoImpl.getInstance(connection);
+                instance.bannedDao = BannedDaoImpl.getInstance(connection);
                 return instance;
             } catch (SQLException e) {
                 throw new RuntimeException(e);

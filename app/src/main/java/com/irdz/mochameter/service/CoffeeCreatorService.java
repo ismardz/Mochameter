@@ -23,7 +23,7 @@ public class CoffeeCreatorService {
             .barcode(barcode)
             .build());
         ExecutorUtils.runCallables(() -> {
-            coffee.set(AppDatabase.getInstance().coffeeCreatorDao.createIfNotExists(coffee.get()));
+            coffee.set(AppDatabase.getInstance().getCoffeeCreatorDao().createIfNotExists(coffee.get()));
             return null;
         });
         return coffee.get();

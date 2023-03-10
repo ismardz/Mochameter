@@ -22,11 +22,11 @@ public class UserService {
     public User findByAndroidIdOrCreateIt(final String androidId) {
         final User[] user = {null};
         ExecutorUtils.runCallables(() -> {
-            User userByAndroidId = AppDatabase.getInstance().userDao.findByAndroidId(androidId);
+            User userByAndroidId = AppDatabase.getInstance().getUserDao().findByAndroidId(androidId);
             user[0] = Optional.ofNullable(userByAndroidId)
                 .orElseGet(() -> {
                     try {
-                        return AppDatabase.getInstance().userDao.createIfNotExists(createUserWithAndroidId(androidId));
+                        return AppDatabase.getInstance().getUserDao().createIfNotExists(createUserWithAndroidId(androidId));
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }

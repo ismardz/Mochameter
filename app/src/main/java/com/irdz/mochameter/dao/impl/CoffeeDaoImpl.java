@@ -35,7 +35,7 @@ public class CoffeeDaoImpl extends BaseDaoImpl<Coffee, Integer> implements Coffe
     @Override
     public Coffee findByBarcode(final String barcode) {
         try {
-            QueryBuilder<Coffee, Integer> coffeeQueryBuilder = AppDatabase.getInstance().coffeeDao.queryBuilder();
+            QueryBuilder<Coffee, Integer> coffeeQueryBuilder = AppDatabase.getInstance().getCoffeeDao().queryBuilder();
 
             Where<Coffee, Integer> where = queryBuilder().where().eq("barcode", barcode);
             coffeeQueryBuilder.setWhere(where);

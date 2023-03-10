@@ -1,7 +1,5 @@
 package com.irdz.mochameter.dao.impl;
 
-import android.content.ContextWrapper;
-
 import com.google.android.gms.common.util.Strings;
 import com.irdz.mochameter.config.AppDatabase;
 import com.irdz.mochameter.dao.ReviewDao;
@@ -43,17 +41,16 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
         return instance;
     }
 
-    public Review findByCoffeIdAndUserAndroidIdOrLoggedInUser(final int coffeeId, final String androidId, final ContextWrapper context) {
+    public Review findByCoffeIdAndUserAndroidIdOrLoggedInUser(final int coffeeId, final String androidId, final Integer userId) {
         try {
-            QueryBuilder<Review, Integer> reviewQueryBuilder = AppDatabase.getInstance().reviewDao.queryBuilder();
-            QueryBuilder<User, Integer> userQueryBuilder = AppDatabase.getInstance().userDao.queryBuilder();
+            QueryBuilder<Review, Integer> reviewQueryBuilder = AppDatabase.getInstance().getReviewDao().queryBuilder();
+            QueryBuilder<User, Integer> userQueryBuilder = AppDatabase.getInstance().getUserDao().queryBuilder();
 
             Where<Review, Integer> whereReview = queryBuilder().where()
                 .eq("coffee_id", coffeeId);
 
-            Integer loggedInUserId = UserDaoImpl.getLoggedInUserId(context);
-            if(loggedInUserId != null) {
-                whereReview.and().eq("user_id", loggedInUserId);
+            if(userId != null) {
+                whereReview.and().eq("user_id", userId);
             } else {
                 Where<User, Integer> whereUser = userQueryBuilder.where().eq("android_id", androidId);
                 userQueryBuilder.setWhere(whereUser);
@@ -74,7 +71,7 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
     public Review findByCoffeIdAvg(final Integer coffeeId) {
         String query = buildQueryAvg(coffeeId, null, null, null, null);
         try {
-            GenericRawResults<String[]> results = AppDatabase.getInstance().reviewDao.queryRaw(query);
+            GenericRawResults<String[]> results = AppDatabase.getInstance().getReviewDao().queryRaw(query);
             String[] row = results.getFirstResult();
             return mapReviewFromRawRow(row);
         } catch (SQLException e) {
@@ -118,7 +115,7 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
 
     private List<Review> getReviewList(final String query) {
         try {
-            GenericRawResults<String[]> results = AppDatabase.getInstance().reviewDao.queryRaw(query);
+            GenericRawResults<String[]> results = AppDatabase.getInstance().getReviewDao().queryRaw(query);
             return results.getResults().stream()
                 .map(this::mapReviewFromRawRow)
                 .collect(Collectors.toList());

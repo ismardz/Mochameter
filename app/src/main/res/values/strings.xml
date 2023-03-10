@@ -50,4 +50,6 @@
     <string name="barcode">Barcode</string>
     <string name="verify_barcode">Verify that the barcode matches the one on the coffee you scanned. If they don\'t match, scan it again. Ignore leading zeros</string>
     <string name="footer_ranking">If you can\'t find your coffee it means it hasn\'t been reviewed yet. Be the first one scanning its barcode!</string>
+    <string name="register_coffee">Register coffee</string>
+    <string name="you_have_been_banned_for_creating_inappropriate_products">You have been banned for creating inappropriate products.</string>
 </resources>

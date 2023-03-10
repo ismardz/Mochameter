@@ -41,4 +41,7 @@
     <string name="barcode">Código de barras</string>
     <string name="verify_barcode">Verifica que el código de barras coincide con el del café que has escaneado. Si no coinciden escanéalo de nuevo. (Ignora los ceros a la izquierda)</string>
     <string name="footer_ranking">Si no puedes encontrar tu café significa que todavía no ha sido evaluado. Sé el primero escaneando su código de barras!</string>
+    <string name="register_coffee">Registrar café</string>
+    <string name="you_have_been_banned_for_creating_inappropriate_products">Has sido bloqueado por crear productos inapropiados.</string>
+
 </resources>

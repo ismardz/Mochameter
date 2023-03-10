@@ -41,7 +41,7 @@ public class UserDaoImpl extends BaseDaoImpl<User, Integer> implements UserDao {
     @Override
     public User findByAndroidId(final String androidId) {
         try {
-            QueryBuilder<User, Integer> coffeeQueryBuilder = AppDatabase.getInstance().userDao.queryBuilder();
+            QueryBuilder<User, Integer> coffeeQueryBuilder = AppDatabase.getInstance().getUserDao().queryBuilder();
 
             Where<User, Integer> where = queryBuilder().where().eq("android_id", androidId);
             coffeeQueryBuilder.setWhere(where);

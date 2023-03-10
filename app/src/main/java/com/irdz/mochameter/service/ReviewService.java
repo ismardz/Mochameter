@@ -23,7 +23,7 @@ public class ReviewService {
     public Review getReviewByCoffeeId(final Integer coffeeId) {
         AtomicReference<Review> review = new AtomicReference<>();
         ExecutorUtils.runCallables(() -> {
-            review.set(AppDatabase.getInstance().reviewDao.findByCoffeIdAvg(coffeeId));
+            review.set(AppDatabase.getInstance().getReviewDao().findByCoffeIdAvg(coffeeId));
             return review;
         });
         return review.get();
@@ -37,7 +37,7 @@ public class ReviewService {
     ) {
         List<Review> reviews = new ArrayList<>();
         ExecutorUtils.runCallables(() -> {
-            reviews.addAll(AppDatabase.getInstance().reviewDao.findByAvgOrderBy(queryNameBrand, order, reversed, page));
+            reviews.addAll(AppDatabase.getInstance().getReviewDao().findByAvgOrderBy(queryNameBrand, order, reversed, page));
             return null;
         });
         return reviews;
@@ -52,7 +52,7 @@ public class ReviewService {
     ) {
         List<Review> reviews = new ArrayList<>();
         ExecutorUtils.runCallables(() -> {
-            reviews.addAll(AppDatabase.getInstance().reviewDao
+            reviews.addAll(AppDatabase.getInstance().getReviewDao()
                 .findMyEvaluationsOrderByPaged(queryNameBrand, order, reversed, page, androidId));
             return null;
         });
@@ -61,8 +61,21 @@ public class ReviewService {
 
     public void insertOrUpdate(final Review review) {
         ExecutorUtils.runCallables(() -> {
-            AppDatabase.getInstance().reviewDao.createOrUpdate(review);
+            AppDatabase.getInstance().getReviewDao().createOrUpdate(review);
             return null;
         });
+    }
+
+    public Review findByCoffeIdAndUserAndroidIdOrLoggedInUser(final int coffeeId, final String androidId, final Integer userId) {
+        AtomicReference<Review> rev = new AtomicReference<>(null);
+        ExecutorUtils.runCallables(() -> {
+            rev.set(AppDatabase.getInstance().getReviewDao().findByCoffeIdAndUserAndroidIdOrLoggedInUser(
+                coffeeId,
+                androidId,
+                userId
+            ));
+            return rev;
+        });
+        return rev.get();
     }
 }

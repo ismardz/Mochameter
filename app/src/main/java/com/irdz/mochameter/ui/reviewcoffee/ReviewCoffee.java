@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.irdz.mochameter.R;
-import com.irdz.mochameter.config.AppDatabase;
 import com.irdz.mochameter.dao.impl.UserDaoImpl;
 import com.irdz.mochameter.model.entity.Coffee;
 import com.irdz.mochameter.model.entity.Review;
@@ -23,11 +22,9 @@ import com.irdz.mochameter.service.ReviewService;
 import com.irdz.mochameter.service.UserService;
 import com.irdz.mochameter.ui.coffeedetail.CoffeeDetail;
 import com.irdz.mochameter.util.AdUtils;
-import com.irdz.mochameter.util.ExecutorUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ReviewCoffee extends AppCompatActivity {
 
@@ -62,18 +59,14 @@ public class ReviewCoffee extends AppCompatActivity {
         Coffee coffeeDatabase = (Coffee) getIntent().getSerializableExtra("coffeeDatabase");
 
         //buscar review por coffee + MAC address/userid para rellenarlo
-        AtomicReference<Review> review = new AtomicReference<>(null);
+        Review review = null;
         if (coffeeDatabase != null) {
-            ExecutorUtils.runCallables(() -> {
-                review.set(AppDatabase.getInstance().reviewDao.findByCoffeIdAndUserAndroidIdOrLoggedInUser(
-                    coffeeDatabase.getId(),
-                    getAndroidId(),
-                    this
-                ));
-                return null;
-            });
+            review = ReviewService.getInstance().findByCoffeIdAndUserAndroidIdOrLoggedInUser(
+                coffeeDatabase.getId(),
+                getAndroidId(),
+                UserDaoImpl.getLoggedInUserId(this));
         }
-        fillCoffeInfo(coffeeDetail, coffeeDatabase, review.get());
+        fillCoffeInfo(coffeeDetail, coffeeDatabase, review);
 
         AdUtils.loadAd(getString(R.string.interstitialAdReviewCoffee_id), this, null);
     }
@@ -104,7 +97,7 @@ public class ReviewCoffee extends AppCompatActivity {
             float score = rbScore.getRating();
 
             if(acidity == 0 && aroma == 0 && body == 0 && aftertaste == 0 && score == 0) {
-                Toast.makeText(this, R.string.thatBad, Toast.LENGTH_SHORT);
+                Toast.makeText(this, R.string.thatBad, Toast.LENGTH_SHORT).show();
             } else {
                 User user = getUser();
                 Coffee coffeeByBarCode = getCoffee(coffeeDatabase, coffeeDetail);

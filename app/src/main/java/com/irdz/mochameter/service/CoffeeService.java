@@ -21,7 +21,7 @@ public class CoffeeService {
     public Coffee findByBarcode(final String barcode) {
         final Coffee[] coffee = {null};
         ExecutorUtils.runCallables(() -> {
-                coffee[0] = AppDatabase.getInstance().coffeeDao.findByBarcode(barcode);
+                coffee[0] = AppDatabase.getInstance().getCoffeeDao().findByBarcode(barcode);
                 return coffee[0];
             });
         return coffee[0];
@@ -30,7 +30,7 @@ public class CoffeeService {
     public Coffee findById(final Integer id) {
         final Coffee[] coffee = {null};
         ExecutorUtils.runCallables(() -> {
-            coffee[0] = AppDatabase.getInstance().coffeeDao.queryForId(id);
+            coffee[0] = AppDatabase.getInstance().getCoffeeDao().queryForId(id);
             return coffee[0];
         });
         return coffee[0];
@@ -46,7 +46,7 @@ public class CoffeeService {
             .imageUrl(coffeeDetail.product.image_front_url)
             .build());
         ExecutorUtils.runCallables(() -> {
-            coffee.set(AppDatabase.getInstance().coffeeDao.createIfNotExists(coffee.get()));
+            coffee.set(AppDatabase.getInstance().getCoffeeDao().createIfNotExists(coffee.get()));
             return null;
         });
         return coffee.get();
@@ -55,7 +55,7 @@ public class CoffeeService {
     public int update(final Coffee coffee) {
         AtomicReference<Integer> coffeear = new AtomicReference<>(0);
         ExecutorUtils.runCallables(() -> {
-            coffeear.set(AppDatabase.getInstance().coffeeDao.update(coffee));
+            coffeear.set(AppDatabase.getInstance().getCoffeeDao().update(coffee));
             return null;
         });
         return coffeear.get();

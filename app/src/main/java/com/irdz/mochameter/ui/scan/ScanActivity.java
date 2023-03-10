@@ -31,22 +31,19 @@ import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
-import com.irdz.mochameter.ui.coffeedetail.CoffeeDetail;
 import com.irdz.mochameter.R;
 import com.irdz.mochameter.databinding.ActivityScanBinding;
 import com.irdz.mochameter.model.openfoodfacts.OpenFoodFactsResponse;
 import com.irdz.mochameter.model.openfoodfacts.Product;
 import com.irdz.mochameter.service.OpenFoodFactsService;
+import com.irdz.mochameter.ui.coffeedetail.CoffeeDetail;
 import com.irdz.mochameter.ui.registercoffee.RegisterCoffee;
 
-import java.io.Serializable;
-import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
 
 public class ScanActivity extends AppCompatActivity {
 
@@ -171,15 +168,7 @@ public class ScanActivity extends AppCompatActivity {
             .map(pbbc -> pbbc.product);
         product.map(p -> p.labels_tags)
             .map(strings -> strings.contains(COFFEES_TAG));
-        Boolean isCoffee = product
-            .map(p -> p.categories_tags)
-            .map(strings -> strings.contains(COFFEES_TAG))
-            .filter(Boolean::booleanValue)
-            .orElseGet(() -> product.map(p -> p.labels_tags)
-                .map(strings -> strings.contains(COFFEES_TAG))
-                .filter(Boolean::booleanValue)
-                .orElseGet(() -> product.map(p -> p.categories_tags.contains(BEVERAGE_TAG) && p.ingredients.stream().anyMatch(i -> i.id.equalsIgnoreCase(COFFEE_TAG))).orElse(false))
-            );
+        Boolean isCoffee = isCoffee(product);
         if(isCoffee && !coffeeRead) {
             coffeeRead = true;
             loadCoffee(productByBarcode);
@@ -188,13 +177,31 @@ public class ScanActivity extends AppCompatActivity {
             new Handler(Looper.getMainLooper()).postDelayed(() -> NOT_COFFEE_BARCODES.remove(barcode), 5000);
             this.barcode = barcode;
             if(productByBarcode == null) {
-                showAToast("error");
+                showAToast("Error");
             } else if(productByBarcode.product == null) {
                 showMessage();
             } else {
                 showAToast(getString(R.string.not_classified_coffee));
             }
         }
+    }
+
+    private Boolean isCoffee(final Optional<Product> product) {
+        Boolean isCoffee = product
+            .map(p -> p.categories_tags)
+            .map(strings -> strings.contains(COFFEES_TAG))
+            .filter(Boolean::booleanValue)
+            .orElseGet(() -> product.map(p -> p.labels_tags)
+                .map(strings -> strings.contains(COFFEES_TAG))
+                .filter(Boolean::booleanValue)
+                .orElseGet(
+                    () -> product.map(p ->
+                    p.categories_tags != null && p.categories_tags.contains(BEVERAGE_TAG) &&
+                        p.ingredients != null && p.ingredients.stream().anyMatch(i -> i.id.equalsIgnoreCase(COFFEE_TAG)))
+                    .orElse(false)
+                )
+            );
+        return isCoffee;
     }
 
     private void loadCoffee(final OpenFoodFactsResponse productByBarcode) {
