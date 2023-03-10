@@ -15,6 +15,7 @@ import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.NonNull;
@@ -73,7 +74,9 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
         try {
             GenericRawResults<String[]> results = AppDatabase.getInstance().getReviewDao().queryRaw(query);
             String[] row = results.getFirstResult();
-            return mapReviewFromRawRow(row);
+            return Optional.ofNullable(row)
+                .map(this::mapReviewFromRawRow)
+                .orElse(null);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

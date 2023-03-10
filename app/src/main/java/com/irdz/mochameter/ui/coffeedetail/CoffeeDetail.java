@@ -120,7 +120,8 @@ public class CoffeeDetail extends AppCompatActivity {
         TextView tvBrand = findViewById(R.id.tvBrand);
 
         if(coffeeDetail != null) {
-            Optional.ofNullable(coffeeDetail.product.image_front_url).map(Picasso.get()::load)
+            Optional.ofNullable(getImageUrl(coffeeDetail))
+                .map(Picasso.get()::load)
                 .ifPresent(requestCreator -> requestCreator.into(ivCoffee));
             tvName.setText(coffeeDetail.product.product_name);
             tvBrand.setText(coffeeDetail.product.brands);
@@ -131,5 +132,11 @@ public class CoffeeDetail extends AppCompatActivity {
             tvBrand.setText(reviewAvg.getCoffee().getBrand());
         }
 
+    }
+
+    private String getImageUrl(final OpenFoodFactsResponse coffeeDetail) {
+        return Optional.ofNullable(coffeeDetail.product.image_front_url)
+            .orElseGet(() -> Optional.ofNullable(coffeeDetail.product.image_ingredients_url)
+                .orElseGet(() -> coffeeDetail.product.image_nutrition_url));
     }
 }

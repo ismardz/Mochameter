@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
@@ -19,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.irdz.mochameter.R;
+import com.irdz.mochameter.dao.impl.UserDaoImpl;
 import com.irdz.mochameter.model.openfoodfacts.OpenFoodFactsResponse;
 import com.irdz.mochameter.service.CoffeeCreatorService;
 import com.irdz.mochameter.service.OpenFoodFactsService;
@@ -88,13 +88,13 @@ public class RegisterCoffee extends AppCompatActivity {
                 etName.getText().toString(),
                 imageBitmap);
             finish();
-            productByBarcode = OpenFoodFactsService.getInstance().findProductByBarcode("8436591720409");
+            productByBarcode = OpenFoodFactsService.getInstance().findProductByBarcode(barcode);
             if(productByBarcode.product == null) {
                 Toast.makeText(this, R.string.error_creating_coffee, Toast.LENGTH_SHORT);
             } else {
                 AdUtils.showAd(getString(R.string.interstitialAdReviewCoffee_id), this);
                 CoffeeCreatorService.getInstance().insert(
-                    Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID),
+                    UserDaoImpl.getAndroidId(this),
                     barcode
                 );
             }

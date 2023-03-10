@@ -29,7 +29,7 @@
             android:textSize="20dp" />
     </FrameLayout>
     <FrameLayout
-        android:id="@+id/frameLayout"
+        android:id="@+id/frameLayoutNotRegistered"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="2dp">
@@ -43,12 +43,37 @@
 
         <!-- Text -->
         <TextView
-            android:id="@+id/tvMessage"
+            android:id="@+id/tvMessageNotRegistered"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:elevation="4dp"
-            android:text="@string/not_coffee"
+            android:text="@string/not_found_register"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp" />
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/frameLayoutNotCoffee"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="2dp">
+
+        <!-- Half-transparent layer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80000000"
+            android:elevation="3dp" />
+
+        <!-- Text -->
+        <TextView
+            android:id="@+id/tvMessageNotCoffee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="4dp"
+            android:text="@string/not_classified_coffee"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="24sp" />

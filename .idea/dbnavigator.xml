@@ -124,12 +124,7 @@ AND (user.android_id = 'a3316d376ae093d1' ) and banned.user_id = usu.id ;]]></co
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/coffee" />
-      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/review" />
-      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/coffee_creators" />
-      <object connection-id="b86864aa-10db-4153-a8f9-9a971555a868" object-ref="schemas/public/tables/user" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="b86864aa-10db-4153-a8f9-9a971555a868" dataset="public.coffee_creators" active-filter-id="9914cd28-8bf3-4bde-8e43-269f323c9937">

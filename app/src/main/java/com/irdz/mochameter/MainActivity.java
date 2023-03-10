@@ -5,7 +5,6 @@ import static android.content.ContentValues.TAG;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 
@@ -57,19 +56,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void exitForBannedUser() {
-//        AsyncTask.execute(() -> {
-            //TODO your background code
-            while(BannedService.getInstance() == null) {
-                Log.d(TAG, "waiting for database connection");
-            }
-            bannedUser = BannedService.getInstance().isBannedUser(
-                Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID),
-                UserDaoImpl.getLoggedInUserId(this)
-            );
-            if(bannedUser) {
-                runOnUiThread(() -> showPopupBanned());
-            }
-//        });
+        //TODO your background code
+        while(BannedService.getInstance() == null) {
+            Log.d(TAG, "waiting for database connection");
+        }
+        bannedUser = BannedService.getInstance().isBannedUser(
+            UserDaoImpl.getAndroidId(this),
+            UserDaoImpl.getLoggedInUserId(this)
+        );
+        if(bannedUser) {
+            runOnUiThread(() -> showPopupBanned());
+        }
     }
 
     private void showPopupBanned() {

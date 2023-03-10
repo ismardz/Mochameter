@@ -1,7 +1,6 @@
 package com.irdz.mochameter.ui.reviewcoffee;
 
 import android.os.Bundle;
-import android.provider.Settings;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -63,7 +62,7 @@ public class ReviewCoffee extends AppCompatActivity {
         if (coffeeDatabase != null) {
             review = ReviewService.getInstance().findByCoffeIdAndUserAndroidIdOrLoggedInUser(
                 coffeeDatabase.getId(),
-                getAndroidId(),
+                UserDaoImpl.getAndroidId(this),
                 UserDaoImpl.getLoggedInUserId(this));
         }
         fillCoffeInfo(coffeeDetail, coffeeDatabase, review);
@@ -148,7 +147,8 @@ public class ReviewCoffee extends AppCompatActivity {
         if(UserDaoImpl.getLoggedInUserId(this) != null) {
             userId = UserDaoImpl.getLoggedInUserId(this);
         } else {
-            userId = UserService.getInstance().findByAndroidIdOrCreateIt(getAndroidId()).getId();
+            userId = UserService.getInstance().findByAndroidIdOrCreateIt(
+                UserDaoImpl.getAndroidId(this)).getId();
         }
         return User.builder().id(userId).build();
     }
@@ -189,9 +189,5 @@ public class ReviewCoffee extends AppCompatActivity {
             tvBrand.setText(coffeeDatabase.getBrand());
         }
 
-    }
-
-    private String getAndroidId() {
-        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 }

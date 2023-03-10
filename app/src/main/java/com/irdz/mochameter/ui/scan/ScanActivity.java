@@ -41,6 +41,7 @@ import com.irdz.mochameter.ui.registercoffee.RegisterCoffee;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -52,7 +53,8 @@ public class ScanActivity extends AppCompatActivity {
     private static final String BEVERAGE_TAG = "en:beverages";
     private ActivityScanBinding binding;
 
-    private FrameLayout frameLayout;
+    private FrameLayout frameLayoutNotRegistered;
+    private FrameLayout frameLayoutNotCoffee;
 
     private static final Set<String> NOT_COFFEE_BARCODES = new HashSet<>();
     public static boolean coffeeRead = false;
@@ -61,6 +63,7 @@ public class ScanActivity extends AppCompatActivity {
 
     private String barcode;
     private Toast toast;
+    private boolean keepScanning = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,16 +72,30 @@ public class ScanActivity extends AppCompatActivity {
         binding = ActivityScanBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        frameLayoutNotRegistered = binding.frameLayoutNotRegistered;
+        frameLayoutNotRegistered.setVisibility(View.INVISIBLE);
 
-        frameLayout = binding.frameLayout;
-        frameLayout.setVisibility(View.INVISIBLE);
+        frameLayoutNotCoffee = binding.frameLayoutNotCoffee;
+        frameLayoutNotCoffee.setVisibility(View.INVISIBLE);
 
-        TextView tvMessage = binding.tvMessage;
-//        tvMessage.setOnClickListener(v -> launchOpenFoodFacts());
-        tvMessage.setOnClickListener(v -> {
+        TextView tvMessageNotRegistered = binding.tvMessageNotRegistered;
+//        tvMessageNotRegistered.setOnClickListener(v -> launchOpenFoodFacts());
+        tvMessageNotRegistered.setOnClickListener(v -> {
             Intent intent = new Intent(this, RegisterCoffee.class);
             intent.putExtra("barcode", barcode);
             startActivity(intent);
+        });
+
+        TextView tvMessageNotCoffee = binding.tvMessageNotCoffee;
+        tvMessageNotCoffee.setOnClickListener(v -> {
+            String urlOFF;
+            if(Locale.getDefault().getLanguage().equalsIgnoreCase("es")) {
+                urlOFF = "https://es.openfoodfacts.org/cgi/product.pl?type=edit&code=" + barcode;
+            } else {
+                urlOFF = "https://world.openfoodfacts.org/cgi/product.pl?type=edit&code="+barcode;
+            }
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlOFF));
+            startActivity(browserIntent);
         });
 
         bindCamera();
@@ -149,7 +166,7 @@ public class ScanActivity extends AppCompatActivity {
             Task<List<Barcode>> result = scanner.process(image)
                 .addOnSuccessListener(barcodes -> {
                     // Handle the barcode results
-                    if(!barcodes.isEmpty()) {
+                    if(!barcodes.isEmpty() && keepScanning) {
                         String displayValue = barcodes.get(0).getDisplayValue();
                         readBarcodeFromOpenFoodFacts(displayValue);
                     }
@@ -170,6 +187,7 @@ public class ScanActivity extends AppCompatActivity {
             .map(strings -> strings.contains(COFFEES_TAG));
         Boolean isCoffee = isCoffee(product);
         if(isCoffee && !coffeeRead) {
+            keepScanning = false;
             coffeeRead = true;
             loadCoffee(productByBarcode);
         } else if(!isCoffee && !NOT_COFFEE_BARCODES.contains(barcode)) {
@@ -179,9 +197,9 @@ public class ScanActivity extends AppCompatActivity {
             if(productByBarcode == null) {
                 showAToast("Error");
             } else if(productByBarcode.product == null) {
-                showMessage();
+                showMessageNotRegistered();
             } else {
-                showAToast(getString(R.string.not_classified_coffee));
+                showMessageNotCoffee();
             }
         }
     }
@@ -208,12 +226,25 @@ public class ScanActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CoffeeDetail.class);
         intent.putExtra("coffeeDetail", productByBarcode);
         startActivity(intent);
+        keepScanning = true;
     }
 
-    private void showMessage() {
-        if(frameLayout.getVisibility() == View.INVISIBLE) {
-            frameLayout.setVisibility(View.VISIBLE);
-            frameLayout.postDelayed(() -> frameLayout.setVisibility(View.INVISIBLE), 5000);
+    private void showMessageNotRegistered() {
+        showMessage(frameLayoutNotRegistered);
+    }
+
+    private void showMessageNotCoffee() {
+        showMessage(frameLayoutNotCoffee);
+    }
+
+    private void showMessage(final FrameLayout layoutToShow) {
+        if(frameLayoutNotRegistered.getVisibility() == View.INVISIBLE && frameLayoutNotCoffee.getVisibility() == View.INVISIBLE) {
+            keepScanning = false;
+            layoutToShow.setVisibility(View.VISIBLE);
+            layoutToShow.postDelayed(() -> {
+                layoutToShow.setVisibility(View.INVISIBLE);
+                keepScanning = true;
+            }, 2000);
         }
     }
 

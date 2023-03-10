@@ -13,7 +13,7 @@
     <string name="banner_scan_id">ca-app-pub-4644948724078988/1547766212</string>
     <string name="banner_main_id">ca-app-pub-4644948724078988/8718762928</string>
     <string name="banner_scan_id_test">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="not_coffee">Producto no encontrado.\nPulsa aquí para registrarlo.</string>
+    <string name="not_found_register">Producto no encontrado.\nPulsa aquí para registrarlo.</string>
     <string name="acidity">Acidez</string>
     <string name="aroma">Aroma</string>
     <string name="body">Cuerpo</string>
@@ -37,7 +37,7 @@
     <string name="save">Guardar</string>
     <string name="error_creating_coffee">Error creando café</string>
     <string name="be_responsible">Por favor, sé responsable con el contenido que compartes. Una conducta inadecuada puede dar como resultado el bloqueo de tu usuario.</string>
-    <string name="not_classified_coffee">Producto no catalogado como café</string>
+    <string name="not_classified_coffee">Producto no catalogado como café. Pulsa aqui para ir a Open Food Facts y añade la categoría cafés</string>
     <string name="barcode">Código de barras</string>
     <string name="verify_barcode">Verifica que el código de barras coincide con el del café que has escaneado. Si no coinciden escanéalo de nuevo. (Ignora los ceros a la izquierda)</string>
     <string name="footer_ranking">Si no puedes encontrar tu café significa que todavía no ha sido evaluado. Sé el primero escaneando su código de barras!</string>

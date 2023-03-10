@@ -22,7 +22,7 @@
     <string name="banner_scan_id">ca-app-pub-4644948724078988/1547766212</string>
     <string name="banner_main_id">ca-app-pub-4644948724078988/8718762928</string>
     <string name="banner_scan_id_test">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="not_coffee">Product not found.\nTap here to register it.</string>
+    <string name="not_found_register">Product not found.\nTap here to register it.</string>
     <string name="acidity">Acidity</string>
     <string name="aroma">Aroma</string>
     <string name="body">Body</string>
@@ -30,7 +30,7 @@
     <string name="score">Score</string>
     <string name="review_this_coffee">Review this coffee</string>
     <string name="send_review">Send review</string>
-    <string name="no_reviews">This coffee has not reviews.\nBe the first one to review it!</string>
+    <string name="no_reviews">This coffee has not any reviews.\nBe the first one to review it!</string>
     <string name="sort_by">Sort by</string>
     <string name="reverse">Reverse</string>
     <string name="soon">Coming soon</string>
@@ -46,7 +46,7 @@
     <string name="save">Save</string>
     <string name="error_creating_coffee">Error creating coffee</string>
     <string name="be_responsible">Please, be responsible with the content you share. Inappropriate conduct can result in banning your user.</string>
-    <string name="not_classified_coffee">Product not classified as coffee</string>
+    <string name="not_classified_coffee">Product not classified as coffee. Tap here to go to Open Food Facts and add the coffee category</string>
     <string name="barcode">Barcode</string>
     <string name="verify_barcode">Verify that the barcode matches the one on the coffee you scanned. If they don\'t match, scan it again. Ignore leading zeros</string>
     <string name="footer_ranking">If you can\'t find your coffee it means it hasn\'t been reviewed yet. Be the first one scanning its barcode!</string>

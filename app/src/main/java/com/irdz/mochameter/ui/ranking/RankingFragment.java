@@ -3,7 +3,6 @@ package com.irdz.mochameter.ui.ranking;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +25,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.common.util.Strings;
 import com.irdz.mochameter.R;
+import com.irdz.mochameter.dao.impl.UserDaoImpl;
 import com.irdz.mochameter.databinding.FragmentRankingBinding;
 import com.irdz.mochameter.model.entity.Review;
 import com.irdz.mochameter.service.ReviewService;
@@ -128,23 +128,25 @@ public class RankingFragment extends Fragment {
     }
 
     private void moveFloatinButtonWhenOverlaysOnFooterView(final int totalItemCount, final int lastItem) {
-        if(!myEvaluations && getActivityAux() != null &&  getActivityAux().findViewById(R.id.btn_scan) != null) {
-            View floattinButton = getActivityAux().findViewById(R.id.btn_scan);
-            if (lastItem == totalItemCount) {
-                if(scanButtonInitialY == null) {
-                    scanButtonInitialY = floattinButton.getY();
-                }
-                if((floattinButton.getY() + floattinButton.getHeight() >= footerView.getY()
-                    && footerView.getY() + floattinButton.getHeight() + footerView.getHeight() >= scanButtonInitialY)) {
-                    floattinButton.setY(footerView.getY() + 40);
-                } else {
+        View floattinButton = getActivityAux().findViewById(R.id.btn_scan);
+        if(floattinButton != null) {
+            if(!myEvaluations && getActivityAux() != null) {
+                if (lastItem == totalItemCount) {
+                    if(scanButtonInitialY == null) {
+                        scanButtonInitialY = floattinButton.getY();
+                    }
+                    if((floattinButton.getY() + floattinButton.getHeight() >= footerView.getY()
+                        && footerView.getY() + floattinButton.getHeight() + footerView.getHeight() >= scanButtonInitialY)) {
+                        floattinButton.setY(footerView.getY() + 40);
+                    } else {
+                        floattinButton.setY(scanButtonInitialY);
+                    }
+                } else if (floattinButton.getY() != scanButtonInitialY){
                     floattinButton.setY(scanButtonInitialY);
                 }
-            } else if (floattinButton.getY() != scanButtonInitialY){
+            } else if(scanButtonInitialY != null && floattinButton.getY() != scanButtonInitialY) {
                 floattinButton.setY(scanButtonInitialY);
             }
-        } else if(scanButtonInitialY != null && getActivityAux().findViewById(R.id.btn_scan).getY() != scanButtonInitialY) {
-            getActivityAux().findViewById(R.id.btn_scan).setY(scanButtonInitialY);
         }
     }
 
@@ -269,7 +271,7 @@ public class RankingFragment extends Fragment {
             }
             // Run the database query in the background
             if(myEvaluations) {
-                String androidID = Settings.Secure.getString(getActivityAux().getContentResolver(), Settings.Secure.ANDROID_ID);
+                String androidID = UserDaoImpl.getAndroidId(getActivityAux());
                 return ReviewService.getInstance().findMyEvaluationsOrderByPaged(filterText, order, reversed, page, androidID);
             } else {
                 return ReviewService.getInstance().findAvgOrderByPaged(filterText, order, reversed, page);
