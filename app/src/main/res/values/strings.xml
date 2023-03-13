@@ -46,10 +46,19 @@
     <string name="save">Save</string>
     <string name="error_creating_coffee">Error creating coffee</string>
     <string name="be_responsible">Please, be responsible with the content you share. Inappropriate conduct can result in banning your user.</string>
-    <string name="not_classified_coffee">Product not classified as coffee. Tap here to go to Open Food Facts and add the coffee category</string>
+    <string name="not_classified_coffee">Product not classified as coffee. Tap here to add it to the category coffees</string>
     <string name="barcode">Barcode</string>
     <string name="verify_barcode">Verify that the barcode matches the one on the coffee you scanned. If they don\'t match, scan it again. Ignore leading zeros</string>
     <string name="footer_ranking">If you can\'t find your coffee it means it hasn\'t been reviewed yet. Be the first one scanning its barcode!</string>
     <string name="register_coffee">Register coffee</string>
     <string name="you_have_been_banned_for_creating_inappropriate_products">You have been banned for creating inappropriate products.</string>
+    <string name="add_category">Add category</string>
+    <string name="you_are_going_to_add_this_product_to_the_category_coffees">You are going to add this product to the category coffees.</string>
+    <string name="review_sent">Review sent!</string>
+    <string name="acidity_help">Acidity is a primary coffee flavor sensation that is perceived as a pleasing sharpness toward the front of the mouth, a numbing sensation on the tip of the tongue, or a dryness at the back of the palate and/or under the edges of the tongue.</string>
+    <string name="aroma_help">Aroma is the smell of coffee. It is responsible for many of the flavor attributes not directly perceived by the tongue (which are sweet, salt, bitter, sour and umami). There are over 800 known aromatics in coffee with new ones being discovered regularly thanks to advances in testing equipment.</string>
+    <string name="body_help">It is a feeling of heaviness and of some sort of “strength” that we can discern with coffee in the mouth, especially by pressing the tongue against the palate. The definition of “body” is used to indicate the structure of the drink and corresponds to a certain coffee consistency felt on the palate.</string>
+    <string name="aftertaste_help">Aftertaste refers to the tastes and aromas left in the mouth after swallowing. Compared to other drinks, coffee flavours hang around for a long time.</string>
+    <string name="score_help">Final score that you think this cafe has. Remember that taste is something personal.</string>
+    <string name="camera_needed">Camera permission needed. Check app permissions</string>
 </resources>

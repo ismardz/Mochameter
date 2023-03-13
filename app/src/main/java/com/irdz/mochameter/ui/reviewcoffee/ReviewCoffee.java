@@ -1,5 +1,6 @@
 package com.irdz.mochameter.ui.reviewcoffee;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -67,6 +68,8 @@ public class ReviewCoffee extends AppCompatActivity {
         }
         fillCoffeInfo(coffeeDetail, coffeeDatabase, review);
 
+        loadHelpers();
+
         AdUtils.loadAd(getString(R.string.interstitialAdReviewCoffee_id), this, null);
     }
 
@@ -125,6 +128,7 @@ public class ReviewCoffee extends AppCompatActivity {
 
                 }
                 onBackPressed();
+                Toast.makeText(this, R.string.review_sent, Toast.LENGTH_SHORT).show();
             }
 
 
@@ -189,5 +193,25 @@ public class ReviewCoffee extends AppCompatActivity {
             tvBrand.setText(coffeeDatabase.getBrand());
         }
 
+    }
+
+    private void loadHelpers() {
+        Dialog dialog = new Dialog(this);
+        TextView textView = new TextView(this);
+        textView.setPadding(10, 10, 10, 10);
+        dialog.setContentView(textView);
+
+        loadHelper(R.id.ivHelpAcidity, R.string.acidity_help, textView, dialog);
+        loadHelper(R.id.ivHelpAroma, R.string.aroma_help, textView, dialog);
+        loadHelper(R.id.ivHelpBody, R.string.body_help, textView, dialog);
+        loadHelper(R.id.ivHelpAftertaste, R.string.aftertaste_help, textView, dialog);
+        loadHelper(R.id.ivHelpScore, R.string.score_help, textView, dialog);
+    }
+
+    private void loadHelper(final int viewResource, final int stringResource, final TextView textView, final Dialog dialog) {
+        findViewById(viewResource).setOnClickListener(v -> {
+            textView.setText(getString(stringResource));
+            dialog.show();
+        });
     }
 }

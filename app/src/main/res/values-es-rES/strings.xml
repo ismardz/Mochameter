@@ -37,11 +37,19 @@
     <string name="save">Guardar</string>
     <string name="error_creating_coffee">Error creando café</string>
     <string name="be_responsible">Por favor, sé responsable con el contenido que compartes. Una conducta inadecuada puede dar como resultado el bloqueo de tu usuario.</string>
-    <string name="not_classified_coffee">Producto no catalogado como café. Pulsa aqui para ir a Open Food Facts y añade la categoría cafés</string>
+    <string name="not_classified_coffee">Producto no catalogado como café. Pulsa aqui para añadirlo a la categoría cafés</string>
     <string name="barcode">Código de barras</string>
     <string name="verify_barcode">Verifica que el código de barras coincide con el del café que has escaneado. Si no coinciden escanéalo de nuevo. (Ignora los ceros a la izquierda)</string>
     <string name="footer_ranking">Si no puedes encontrar tu café significa que todavía no ha sido evaluado. Sé el primero escaneando su código de barras!</string>
     <string name="register_coffee">Registrar café</string>
     <string name="you_have_been_banned_for_creating_inappropriate_products">Has sido bloqueado por crear productos inapropiados.</string>
-
+    <string name="add_category">Añadir categoría</string>
+    <string name="you_are_going_to_add_this_product_to_the_category_coffees">Vas a añadir este producto a la categoría cafés.</string>
+    <string name="review_sent">Valoración enviada!</string>
+    <string name="acidity_help">La acidez es una sensación primaria del sabor del café que se percibe como una agradable nitidez hacia el frente de la boca, una sensación de adormecimiento en la punta de la lengua o sequedad en la parte posterior del paladar y/o debajo de los bordes de la lengua.</string>
+    <string name="aroma_help">El aroma es el olor del café. Es responsable de muchos de los atributos del sabor que la lengua no percibe directamente (que son dulce, salado, amargo, ácido y umami). Hay más de 800 compuestos aromáticos conocidos en el café y se descubren nuevos regularmente gracias a los avances en los equipos de prueba.</string>
+    <string name="body_help">Es una sensación de pesadez y de una especie de “fuerza” que podemos percibir con el café en la boca, especialmente al presionar la lengua contra el paladar. La definición de “cuerpo” se utiliza para indicar la estructura de la bebida y corresponde a una cierta consistencia del café que se siente en el paladar.</string>
+    <string name="aftertaste_help">El retrogusto se refiere a los sabores y aromas que quedan en la boca después de tragar. En comparación con otras bebidas, los sabores del café duran mucho tiempo.</string>
+    <string name="score_help">Puntuación final que crees que tiene este café. Recuerda que el gusto es algo personal.</string>
+    <string name="camera_needed">Permiso de cámara necesario. Verifica permisos de la app.</string>
 </resources>

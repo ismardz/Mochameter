@@ -23,13 +23,15 @@ import okhttp3.Response;
 
 public class OpenFoodFactsService {
 
-    private static final String LABEL = "coffees";
+    private static final String CATEGORY = "coffees";
 
     private static final String URL_GET_BARCODE = "https://world.openfoodfacts.org/api/v0/product/%s.json";
 
     private static final String URL_POST_PRODUCT_IMAGE = "https://world.openfoodfacts.org/cgi/product_image_upload.pl";
     private static final String URL_POST_PRODUCT_CREATE = "https://world.openfoodfacts.org/cgi/product_jqm2.pl?" +
-        "code=%s&brands=%s&product_name=%s&labels=" + LABEL + "&categories=" + LABEL;
+        "code=%s&brands=%s&product_name=%s&categories=" + CATEGORY;
+    private static final String URL_POST_PRODUCT_ADD_CATEGORY = "https://world.openfoodfacts.org/cgi/product_jqm2.pl?" +
+        "code=%s&categories=" + CATEGORY;
     private static OpenFoodFactsService instance;
 
     public static OpenFoodFactsService getInstance() {
@@ -148,6 +150,28 @@ public class OpenFoodFactsService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void addCoffeeCategory(final String barcode) {
+        ExecutorUtils.runCallables(() -> {
+            String urlWithValues = String.format(URL_POST_PRODUCT_ADD_CATEGORY, barcode);
+            Request request = new Request.Builder()
+                .url(urlWithValues)
+                .build();
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
+
+                // Process the response body
+                String responseString = response.body().string();
+                Log.i(TAG, "create product response" + responseString);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
+
     }
 
 }

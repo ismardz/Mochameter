@@ -58,6 +58,7 @@ public class Product implements Serializable {
     public List<String> debug_param_sorted_langs;
     public EcoscoreData ecoscore_data;
     public String ecoscore_grade;
+    public String nutriscore_grade;
     public int ecoscore_score;
     public List<String> ecoscore_tags;
     public List<String> editors;

@@ -28,6 +28,8 @@ import com.irdz.mochameter.R;
 import com.irdz.mochameter.dao.impl.UserDaoImpl;
 import com.irdz.mochameter.databinding.FragmentRankingBinding;
 import com.irdz.mochameter.model.entity.Review;
+import com.irdz.mochameter.model.openfoodfacts.OpenFoodFactsResponse;
+import com.irdz.mochameter.service.OpenFoodFactsService;
 import com.irdz.mochameter.service.ReviewService;
 import com.irdz.mochameter.ui.coffeedetail.CoffeeDetail;
 import com.irdz.mochameter.ui.reviewcoffee.ReviewCoffee;
@@ -141,7 +143,7 @@ public class RankingFragment extends Fragment {
                     } else {
                         floattinButton.setY(scanButtonInitialY);
                     }
-                } else if (floattinButton.getY() != scanButtonInitialY){
+                } else if (scanButtonInitialY != null && floattinButton.getY() != scanButtonInitialY){
                     floattinButton.setY(scanButtonInitialY);
                 }
             } else if(scanButtonInitialY != null && floattinButton.getY() != scanButtonInitialY) {
@@ -152,19 +154,45 @@ public class RankingFragment extends Fragment {
 
     private void itemClickedLogic() {
         binding.lvCoffee.setOnItemClickListener((parent, view, position, id) -> {
-            Review review = (Review) binding.lvCoffee.getItemAtPosition(position);
-            if(review != null) {
-                Intent intent;
-                if(myEvaluations) {
-                    intent = new Intent(getActivityAux(), ReviewCoffee.class);
-                    intent.putExtra("coffeeDatabase", review.getCoffee());
-                    getActivityAux().startActivity(intent);
-                } else {
-                    intent = new Intent(getActivityAux(), CoffeeDetail.class);
-                    intent.putExtra("reviewAvg", review);
+            AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected void onPreExecute() {
+                    // Show the progress bar before the query is executed
+                    showLoading(View.VISIBLE);
                 }
-                getActivityAux().startActivity(intent);
-            }
+
+                @Override
+                protected Void doInBackground(final Void... voids) {
+                    Review review = (Review) binding.lvCoffee.getItemAtPosition(position);
+                    if (review != null) {
+                        Intent intent;
+                        if (myEvaluations) {
+                            intent = new Intent(getActivityAux(), ReviewCoffee.class);
+                            intent.putExtra("coffeeDatabase", review.getCoffee());
+                            getActivityAux().startActivity(intent);
+                        } else {
+                            OpenFoodFactsResponse productByBarcode = OpenFoodFactsService.getInstance()
+                                .findProductByBarcode(review.getCoffee().getBarcode());
+                            intent = new Intent(getActivityAux(), CoffeeDetail.class);
+                            intent.putExtra("coffeeDetail", productByBarcode);
+                            intent.putExtra("reviewAvg", review);
+                        }
+                        getActivityAux().startActivity(intent);
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(final Void unused) {
+                    super.onPostExecute(unused);
+
+                    showLoading(View.INVISIBLE);
+                }
+            };
+
+            asyncTask.execute();
+
         });
     }
 
@@ -188,8 +216,15 @@ public class RankingFragment extends Fragment {
     }
 
     private void reverseCheckBoxLogic() {
-        binding.cbReverse.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            reversed = isChecked;
+        binding.ivReverse.setOnClickListener(v -> {
+            reversed = !reversed;
+            getActivityAux().runOnUiThread(() -> {
+                float rotation = 0;
+                if(reversed) {
+                    rotation = 180;
+                }
+                binding.ivReverse.animate().rotation(rotation).setDuration(500);
+            });
             resetCriteriaToLoad();
             refreshRanking();
         });
@@ -404,8 +439,6 @@ public class RankingFragment extends Fragment {
             footerView.setGravity(Gravity.CENTER);
 
             footerView.setPadding(20, 20, 20, 20);
-
-            footerView.setMaxHeight(200);
 
             binding.lvCoffee.addFooterView(footerView);
         }

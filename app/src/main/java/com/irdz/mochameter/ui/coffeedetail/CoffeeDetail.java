@@ -2,7 +2,6 @@ package com.irdz.mochameter.ui.coffeedetail;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -11,14 +10,17 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.irdz.mochameter.R;
-import com.irdz.mochameter.ui.reviewcoffee.ReviewCoffee;
 import com.irdz.mochameter.model.entity.Coffee;
 import com.irdz.mochameter.model.entity.Review;
 import com.irdz.mochameter.model.openfoodfacts.OpenFoodFactsResponse;
 import com.irdz.mochameter.service.CoffeeService;
+import com.irdz.mochameter.service.OpenFoodFactsService;
 import com.irdz.mochameter.service.ReviewService;
+import com.irdz.mochameter.ui.reviewcoffee.ReviewCoffee;
 import com.irdz.mochameter.ui.scan.ScanActivity;
 import com.irdz.mochameter.util.ExecutorUtils;
+import com.irdz.mochameter.util.OpenFoodFactsUtils;
+import com.irdz.mochameter.util.Score;
 import com.squareup.picasso.Picasso;
 
 import java.util.Optional;
@@ -53,7 +55,6 @@ public class CoffeeDetail extends AppCompatActivity {
     public void onRestart() {
         super.onRestart();
         OpenFoodFactsResponse coffeeDetail = (OpenFoodFactsResponse) getIntent().getSerializableExtra("coffeeDetail");
-//        Review reviewAvg = (Review) getIntent().getSerializableExtra("reviewAvg");
         fillCoffeInfo(coffeeDetail, null);
     }
 
@@ -70,10 +71,6 @@ public class CoffeeDetail extends AppCompatActivity {
             if(coffeeDatabase == null) {
                 coffeeDatabase = CoffeeService.getInstance().findByBarcode(coffeeDetail.code);
             }
-            if (coffeeDatabase != null && coffeeDatabase.getImageUrl() == null && coffeeDetail.product.image_front_url != null) {
-                coffeeDatabase.setImageUrl(coffeeDetail.product.image_front_url);
-                CoffeeService.getInstance().update(coffeeDatabase);
-            }
             Optional.ofNullable(coffeeDatabase)
                 .map(Coffee::getId)
                 .ifPresent(coffeeId -> ExecutorUtils.runCallables(() -> {
@@ -85,8 +82,48 @@ public class CoffeeDetail extends AppCompatActivity {
             review.set(reviewAvg);
         }
 
+        if(coffeeDetail == null) {
+            OpenFoodFactsResponse productByBarcode = OpenFoodFactsService.getInstance()
+                .findProductByBarcode(coffeeDatabase.getBarcode());
+            if(productByBarcode != null) {
+                fillOFFData(productByBarcode);
+                updateObsoleteData(productByBarcode);
+            }
+        } else {
+            fillOFFData(coffeeDetail);
+            updateObsoleteData(coffeeDetail);
+        }
+
+
         fillCoffeeData(coffeeDetail, review.get());
         fillReview(review.get());
+    }
+
+    private void fillOFFData(final OpenFoodFactsResponse coffeeDetail) {
+        Optional.ofNullable(coffeeDetail)
+            .map(openFoodFactsResponse -> openFoodFactsResponse.product)
+            .map(product -> product.nutriscore_grade)
+            .map(grade -> Score.getNutriscoreResourceByGrade(grade))
+            .ifPresent(resource -> findViewById(R.id.ivNutriscore)
+                .setForeground(getResources().getDrawable(resource, null)));
+        Optional.ofNullable(coffeeDetail)
+            .map(openFoodFactsResponse -> openFoodFactsResponse.product)
+            .map(product -> product.ecoscore_grade)
+            .map(grade -> Score.getEcocoreResourceByGrade(grade))
+            .ifPresent(resource -> findViewById(R.id.ivEcoscore)
+                .setForeground(getResources().getDrawable(resource, null)));
+    }
+
+    private void updateObsoleteData(final OpenFoodFactsResponse coffeeDetail) {
+        if (coffeeDatabase != null) {
+            Coffee coffeeFromOFF = mapFromOFFtoCoffeDB(coffeeDetail);
+            if(coffeeFromOFF != null && !coffeeDatabase.equals(coffeeFromOFF)) {
+                coffeeDatabase.setBrand(coffeeFromOFF.getBrand());
+                coffeeDatabase.setCoffeeName(coffeeFromOFF.getCoffeeName());
+                coffeeDatabase.setImageUrl(coffeeFromOFF.getImageUrl());
+                CoffeeService.getInstance().update(coffeeDatabase);
+            }
+        }
     }
 
     private void fillReview(final Review review) {
@@ -98,7 +135,8 @@ public class CoffeeDetail extends AppCompatActivity {
         RatingBar rbScore = findViewById(R.id.rbScore);
 
         if(coffeeReviewed) {
-            findViewById(R.id.tvNoReviews).setVisibility(View.INVISIBLE);
+            TextView noReviewsDesc = findViewById(R.id.tvNoReviews);
+            noReviewsDesc.setHeight(0);
             rbAcidity.setRating(review.getAcidity().floatValue());
             rbAroma.setRating(review.getAroma().floatValue());
             rbBody.setRating(review.getBody().floatValue());
@@ -120,7 +158,7 @@ public class CoffeeDetail extends AppCompatActivity {
         TextView tvBrand = findViewById(R.id.tvBrand);
 
         if(coffeeDetail != null) {
-            Optional.ofNullable(getImageUrl(coffeeDetail))
+            Optional.ofNullable(OpenFoodFactsUtils.getImageUrl(coffeeDetail))
                 .map(Picasso.get()::load)
                 .ifPresent(requestCreator -> requestCreator.into(ivCoffee));
             tvName.setText(coffeeDetail.product.product_name);
@@ -134,9 +172,11 @@ public class CoffeeDetail extends AppCompatActivity {
 
     }
 
-    private String getImageUrl(final OpenFoodFactsResponse coffeeDetail) {
-        return Optional.ofNullable(coffeeDetail.product.image_front_url)
-            .orElseGet(() -> Optional.ofNullable(coffeeDetail.product.image_ingredients_url)
-                .orElseGet(() -> coffeeDetail.product.image_nutrition_url));
+    private Coffee mapFromOFFtoCoffeDB(final OpenFoodFactsResponse coffeeDetail) {
+        return Coffee.builder()
+            .brand(coffeeDetail.product.brands)
+            .coffeeName(coffeeDetail.product.product_name)
+            .imageUrl(OpenFoodFactsUtils.getImageUrl(coffeeDetail))
+            .build();
     }
 }

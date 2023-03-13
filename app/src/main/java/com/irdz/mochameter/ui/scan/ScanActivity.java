@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
@@ -31,6 +32,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.irdz.mochameter.AddCoffeeCategory;
 import com.irdz.mochameter.R;
 import com.irdz.mochameter.databinding.ActivityScanBinding;
 import com.irdz.mochameter.model.openfoodfacts.OpenFoodFactsResponse;
@@ -41,7 +43,6 @@ import com.irdz.mochameter.ui.registercoffee.RegisterCoffee;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -65,6 +66,8 @@ public class ScanActivity extends AppCompatActivity {
     private Toast toast;
     private boolean keepScanning = true;
 
+    private OpenFoodFactsResponse productByBarcode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +82,6 @@ public class ScanActivity extends AppCompatActivity {
         frameLayoutNotCoffee.setVisibility(View.INVISIBLE);
 
         TextView tvMessageNotRegistered = binding.tvMessageNotRegistered;
-//        tvMessageNotRegistered.setOnClickListener(v -> launchOpenFoodFacts());
         tvMessageNotRegistered.setOnClickListener(v -> {
             Intent intent = new Intent(this, RegisterCoffee.class);
             intent.putExtra("barcode", barcode);
@@ -88,14 +90,9 @@ public class ScanActivity extends AppCompatActivity {
 
         TextView tvMessageNotCoffee = binding.tvMessageNotCoffee;
         tvMessageNotCoffee.setOnClickListener(v -> {
-            String urlOFF;
-            if(Locale.getDefault().getLanguage().equalsIgnoreCase("es")) {
-                urlOFF = "https://es.openfoodfacts.org/cgi/product.pl?type=edit&code=" + barcode;
-            } else {
-                urlOFF = "https://world.openfoodfacts.org/cgi/product.pl?type=edit&code="+barcode;
-            }
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlOFF));
-            startActivity(browserIntent);
+            Intent intent = new Intent(this, AddCoffeeCategory.class);
+            intent.putExtra("coffeeDetail", productByBarcode);
+            startActivity(intent);
         });
 
         bindCamera();
@@ -114,6 +111,11 @@ public class ScanActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                 new String[]{android.Manifest.permission.CAMERA},
                 MY_PERMISSIONS_REQUEST_CAMERA);
+        }
+
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_DENIED) {
+            Toast.makeText(this, R.string.camera_needed, Toast.LENGTH_LONG).show();
         }
 
         // Get an instance of the ProcessCameraProvider
@@ -180,7 +182,7 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     public void readBarcodeFromOpenFoodFacts(final String barcode) {
-        OpenFoodFactsResponse productByBarcode = OpenFoodFactsService.getInstance().findProductByBarcode(barcode);
+        productByBarcode = OpenFoodFactsService.getInstance().findProductByBarcode(barcode);
         Optional<Product> product = Optional.ofNullable(productByBarcode)
             .map(pbbc -> pbbc.product);
         product.map(p -> p.labels_tags)
@@ -244,7 +246,7 @@ public class ScanActivity extends AppCompatActivity {
             layoutToShow.postDelayed(() -> {
                 layoutToShow.setVisibility(View.INVISIBLE);
                 keepScanning = true;
-            }, 2000);
+            }, 3000);
         }
     }
 

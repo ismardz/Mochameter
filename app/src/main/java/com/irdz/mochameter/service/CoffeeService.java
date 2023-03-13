@@ -4,6 +4,7 @@ import com.irdz.mochameter.config.AppDatabase;
 import com.irdz.mochameter.model.entity.Coffee;
 import com.irdz.mochameter.model.openfoodfacts.OpenFoodFactsResponse;
 import com.irdz.mochameter.util.ExecutorUtils;
+import com.irdz.mochameter.util.OpenFoodFactsUtils;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -43,7 +44,7 @@ public class CoffeeService {
             .barcode(coffeeDetail.code)
             .brand(coffeeDetail.product.brands)
             .coffeeName(coffeeDetail.product.product_name)
-            .imageUrl(coffeeDetail.product.image_front_url)
+            .imageUrl(OpenFoodFactsUtils.getImageUrl(coffeeDetail))
             .build());
         ExecutorUtils.runCallables(() -> {
             coffee.set(AppDatabase.getInstance().getCoffeeDao().createIfNotExists(coffee.get()));

@@ -1,177 +1,225 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp"
-    tools:context=".ui.reviewcoffee.ReviewCoffee">
-
-
-    <ImageView
-        android:id="@+id/ivCoffee"
+    tools:context=".ui.coffeedetail.CoffeeDetail">
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_report_image"
-        android:foregroundGravity="center_vertical|center_horizontal"
-        android:maxHeight="300dp"
-        android:minHeight="200dp" />
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="tvName"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/tvBrand"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="tvBrand"
-        android:textSize="16sp" />
-
-    <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
-
-        <TableRow
+        <ImageView
+            android:id="@+id/ivCoffee"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp">
+            android:layout_height="wrap_content"
+            android:foregroundGravity="center_vertical|center_horizontal"
+            android:maxHeight="300dp"
+            android:minHeight="200dp"
+            android:layout_marginTop="10dp"
+            android:src="@android:drawable/ic_menu_report_image"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tvAcidity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/acidity" />
-
-            <com.irdz.mochameter.util.SvgRatingBar
-                android:id="@+id/rbAcidity"
-                style="@style/coffeeRatingBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:rating="0"
-                android:stepSize="0.5" />
-
-        </TableRow>
-
-        <TableRow
+        <TextView
+            android:id="@+id/tvName"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="tvNameasdasd"
+            android:textSize="20sp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintTop_toBottomOf="@id/ivCoffee" />
 
-            <TextView
-                android:id="@+id/tvAroma"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/aroma" />
-
-            <com.irdz.mochameter.util.SvgRatingBar
-                android:id="@+id/rbAroma"
-                style="@style/coffeeRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:indeterminateDrawable="@drawable/ic_full2"
-                android:rating="0"
-                android:stepSize="0.5" />
-        </TableRow>
-
-        <TableRow
+        <TextView
+            android:id="@+id/tvBrand"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp">
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="tvBrand"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/tvName" />
 
-            <TextView
-                android:id="@+id/tvBody"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:text="@string/body" />
+        <TextView
+            android:id="@+id/tvAcidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp"
+            android:text="@string/acidity"
+            app:layout_constraintBottom_toBottomOf="@id/rbAcidity"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/rbAcidity" />
 
-            <com.irdz.mochameter.util.SvgRatingBar
-                android:id="@+id/rbBody"
-                style="@style/coffeeRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:rating="0"
-                android:stepSize="0.5" />
+        <ImageView
+            android:id="@+id/ivHelpAcidity"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/rbAcidity"
+            app:layout_constraintStart_toEndOf="@id/tvAcidity"
+            app:layout_constraintTop_toTopOf="@id/rbAcidity"
+            app:srcCompat="@android:drawable/ic_menu_help"/>
+
+        <com.irdz.mochameter.util.SvgRatingBar
+            android:id="@+id/rbAcidity"
+            style="@style/coffeeRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:rating="0"
+            android:stepSize="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvAftertaste"
+            app:layout_constraintTop_toBottomOf="@id/tvBrand" />
+
+        <TextView
+            android:id="@+id/tvAroma"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp"
+            android:text="@string/aroma"
+            app:layout_constraintBottom_toBottomOf="@id/rbAroma"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/rbAroma" />
 
 
-        </TableRow>
+        <ImageView
+            android:id="@+id/ivHelpAroma"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/rbAroma"
+            app:layout_constraintStart_toEndOf="@id/tvAroma"
+            app:layout_constraintTop_toTopOf="@id/rbAroma"
+            app:srcCompat="@android:drawable/ic_menu_help" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp">
+        <com.irdz.mochameter.util.SvgRatingBar
+            android:id="@+id/rbAroma"
+            style="@style/coffeeRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:rating="0"
+            android:stepSize="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvAftertaste"
+            app:layout_constraintTop_toBottomOf="@id/rbAcidity" />
 
-            <TextView
-                android:id="@+id/tvAftertaste"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/aftertaste" />
+        <TextView
+            android:id="@+id/tvBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp"
+            android:text="@string/body"
+            app:layout_constraintBottom_toBottomOf="@id/rbBody"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/rbBody" />
 
-            <com.irdz.mochameter.util.SvgRatingBar
-                android:id="@+id/rbAftertaste"
-                style="@style/coffeeRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:rating="0"
-                android:stepSize="0.5" />
 
-        </TableRow>
+        <ImageView
+            android:id="@+id/ivHelpBody"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/rbBody"
+            app:layout_constraintStart_toEndOf="@id/tvBody"
+            app:layout_constraintTop_toTopOf="@id/rbBody"
+            app:srcCompat="@android:drawable/ic_menu_help"/>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp">
+        <com.irdz.mochameter.util.SvgRatingBar
+            android:id="@+id/rbBody"
+            style="@style/coffeeRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:rating="0"
+            android:stepSize="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvAftertaste"
+            app:layout_constraintTop_toBottomOf="@id/rbAroma" />
 
-            <TextView
-                android:id="@+id/tvScore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/score" />
+        <TextView
+            android:id="@+id/tvAftertaste"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp"
+            android:text="@string/aftertaste"
+            app:layout_constraintBottom_toBottomOf="@id/rbAftertaste"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/rbAftertaste" />
 
-            <com.irdz.mochameter.util.SvgRatingBar
-                android:id="@+id/rbScore"
-                style="@style/coffeeRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:rating="0"
-                android:stepSize="0.5" />
 
-        </TableRow>
+        <ImageView
+            android:id="@+id/ivHelpAftertaste"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/rbAftertaste"
+            app:layout_constraintStart_toEndOf="@id/tvAftertaste"
+            app:layout_constraintTop_toTopOf="@id/rbAftertaste"
+            app:srcCompat="@android:drawable/ic_menu_help"/>
 
-    </TableLayout>
+        <com.irdz.mochameter.util.SvgRatingBar
+            android:id="@+id/rbAftertaste"
+            style="@style/coffeeRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:rating="0"
+            android:stepSize="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvAftertaste"
+            app:layout_constraintTop_toBottomOf="@id/rbBody" />
 
-    <Button
-        android:id="@+id/btnSendReview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp"
-        android:text="@string/send_review" />
+        <TextView
+            android:id="@+id/tvScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp"
+            android:text="@string/score"
+            app:layout_constraintBottom_toBottomOf="@id/rbScore"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/rbScore" />
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/ivHelpScore"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/rbScore"
+            app:layout_constraintStart_toEndOf="@id/tvScore"
+            app:layout_constraintTop_toTopOf="@id/rbScore"
+            app:srcCompat="@android:drawable/ic_menu_help"/>
+
+        <com.irdz.mochameter.util.SvgRatingBar
+            android:id="@+id/rbScore"
+            style="@style/coffeeRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:rating="0"
+            android:stepSize="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvAftertaste"
+            app:layout_constraintTop_toBottomOf="@id/rbAftertaste" />
+
+        <Button
+            android:id="@+id/btnSendReview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="@string/send_review"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rbScore" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

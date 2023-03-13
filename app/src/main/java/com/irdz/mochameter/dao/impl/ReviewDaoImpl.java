@@ -100,7 +100,7 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
         final Boolean reversed,
         final Integer page,
         final String androidId) {
-        String query = "select  coffee_id, aroma, acidity, body, aftertaste, score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url   " +
+        String query = "select  coffee_id, aroma, acidity, body, aftertaste, score,  coffee.coffee_name coffee_name,  coffee.brand brand,  coffee.image_url image_url, coffee.barcode barcode   " +
             " from public.review review, public.coffee coffee, public.user usu " +
             " where review.coffee_id = coffee.id  " +
             " and review.user_id = usu.id  " +
@@ -108,7 +108,7 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
 
         query = setFilterNameBrand(queryNameBrand, query);
 
-        query += " group by coffee_id, aroma, acidity, body, aftertaste, score, coffee_name, brand, image_url   ";
+        query += " group by coffee_id, aroma, acidity, body, aftertaste, score, coffee_name, brand, image_url, barcode   ";
 
         query = setOrderBy(order, reversed, query);
 
@@ -139,6 +139,7 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
                 .coffeeName(row[6])
                 .brand(row[7])
                 .imageUrl(row[8])
+                .barcode(row[9])
             .build()); // set the coffee using the coffee_id column
         return review;
     }
@@ -159,7 +160,8 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
             " avg(score) as score, " +
             " coffee.coffee_name coffee_name, " +
             " coffee.brand brand, " +
-            " coffee.image_url image_url " +
+            " coffee.image_url image_url, " +
+            " coffee.barcode barcode " +
             " from public.review review, public.coffee coffee " +
             " where review.coffee_id = coffee.id ";
 
@@ -169,7 +171,7 @@ public class ReviewDaoImpl extends BaseDaoImpl<Review, Integer> implements Revie
 
         query = setFilterNameBrand(queryNameBrand, query);
 
-        query += " group by coffee_id, coffee_name, brand, image_url ";
+        query += " group by coffee_id, coffee_name, brand, image_url, barcode ";
 
         query = setOrderBy(order, reversed, query);
 
