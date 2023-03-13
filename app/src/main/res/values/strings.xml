@@ -46,7 +46,7 @@
     <string name="save">Save</string>
     <string name="error_creating_coffee">Error creating coffee</string>
     <string name="be_responsible">Please, be responsible with the content you share. Inappropriate conduct can result in banning your user.</string>
-    <string name="not_classified_coffee">Product not classified as coffee. Tap here to add it to the category coffees</string>
+    <string name="not_classified_coffee">Product not classified as coffee. Tap here to add it to the category coffees.</string>
     <string name="barcode">Barcode</string>
     <string name="verify_barcode">Verify that the barcode matches the one on the coffee you scanned. If they don\'t match, scan it again. Ignore leading zeros</string>
     <string name="footer_ranking">If you can\'t find your coffee it means it hasn\'t been reviewed yet. Be the first one scanning its barcode!</string>
@@ -60,5 +60,5 @@
     <string name="body_help">It is a feeling of heaviness and of some sort of “strength” that we can discern with coffee in the mouth, especially by pressing the tongue against the palate. The definition of “body” is used to indicate the structure of the drink and corresponds to a certain coffee consistency felt on the palate.</string>
     <string name="aftertaste_help">Aftertaste refers to the tastes and aromas left in the mouth after swallowing. Compared to other drinks, coffee flavours hang around for a long time.</string>
     <string name="score_help">Final score that you think this cafe has. Remember that taste is something personal.</string>
-    <string name="camera_needed">Camera permission needed. Check app permissions</string>
+    <string name="camera_needed">Camera permission needed.</string>
 </resources>
